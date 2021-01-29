@@ -47,7 +47,8 @@ void Game::run()
                 break;
 
             case KeyPress:
-                running = false;
+                cellmap->initCellMap();
+                canvas->draw();
                 break;
         }
     }

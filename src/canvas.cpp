@@ -135,4 +135,5 @@ void Canvas::draw()
     }
 
     glXSwapBuffers(display, window);
+    XFlush(display);
 }
