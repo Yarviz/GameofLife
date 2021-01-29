@@ -5,12 +5,14 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <cstring>
+#include <random>
 
 #include "canvasobject.h"
 #include "canvas.h"
 
-#define CELL_MAP_WIDTH  256
-#define CELL_MAP_HEIGHT 256
+#define CELL_MAP_WIDTH    256
+#define CELL_MAP_HEIGHT   256
+#define MAX_COLORS        8
 
 class CellMap : public CanvasObject
 {
@@ -30,6 +32,7 @@ class CellMap : public CanvasObject
         int      height;
         uint8_t  cellmap[2][CELL_MAP_WIDTH][CELL_MAP_HEIGHT];
         uint32_t cellpic[CELL_MAP_WIDTH * CELL_MAP_HEIGHT];
+        uint32_t colors[MAX_COLORS];
 };
 
 #endif // CELLMAP_H

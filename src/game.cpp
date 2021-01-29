@@ -16,7 +16,7 @@ void Game::init()
     canvas->setTitle("Conways Game of Life");
 
     cellmap = new CellMap(canvas.get());
-    cellmap->setSize(256, 256);
+    cellmap->setSize(16, 16);
     cellmap->initCellMap();
 }
 
