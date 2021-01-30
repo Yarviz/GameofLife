@@ -18,19 +18,24 @@ using namespace std;
 class Canvas
 {
     public:
-        Canvas(int width, int height);
+        Canvas(int _width, int _height);
         virtual ~Canvas();
 
         void setTitle(const char *title);
         void destroy();
         void refreshContext();
         void draw();
+        void repaint();
         void addChild(CanvasObject *object);
         void removeChild(CanvasObject *object);
         void updateTexture(const uint32_t &source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh);
 
+        int getWidth() {return width;}
+        int getHeight() {return height;}
+
         Display* getDisplay() {return display;}
         Window* getWindow() {return &window;}
+        Window* getRootWindow() {return &root;}
 
     private:
         void initOpenGL();
@@ -45,6 +50,7 @@ class Canvas
         GC			            gc;
 
         GLuint                  texture_id;
+        int                     width, height;
 };
 
 #endif // CANVAS_H

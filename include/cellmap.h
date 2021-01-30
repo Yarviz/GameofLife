@@ -10,9 +10,12 @@
 #include "canvasobject.h"
 #include "canvas.h"
 
-#define CELL_MAP_WIDTH    256
-#define CELL_MAP_HEIGHT   256
+#define CELL_MAP_WIDTH    512
+#define CELL_MAP_HEIGHT   512
 #define MAX_COLORS        8
+
+#define LIVE              1
+#define DEAD              0
 
 class CellMap : public CanvasObject
 {
@@ -23,16 +26,29 @@ class CellMap : public CanvasObject
         void draw();
         void setSize(int _width, int _height);
         void initCellMap();
+        void animateCells();
 
     private:
+        void checkCell(const int &x,const int &y, const int &n_cells);
+        void countCenterCells(const int &x,const int &y);
+        void countEdgeCells(const int &x,const int &y);
 
         Canvas  *canvas;
 
+        typedef struct {
+            uint8_t anim;
+            uint8_t cell[2];
+        }Cell;
+
+        Cell     cellmap[CELL_MAP_WIDTH][CELL_MAP_HEIGHT];
+        uint32_t cellpic[CELL_MAP_WIDTH * CELL_MAP_HEIGHT];
+        uint32_t a_colors[MAX_COLORS];
+        uint32_t colors[2];
+        int      add_xy[8][2];
         int      width;
         int      height;
-        uint8_t  cellmap[2][CELL_MAP_WIDTH][CELL_MAP_HEIGHT];
-        uint32_t cellpic[CELL_MAP_WIDTH * CELL_MAP_HEIGHT];
-        uint32_t colors[MAX_COLORS];
+        int      cur_gen, last_gen;
+        bool     animate;
 };
 
 #endif // CELLMAP_H

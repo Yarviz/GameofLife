@@ -1,7 +1,10 @@
 #include "canvas.h"
 
-Canvas::Canvas(int width, int height)
+Canvas::Canvas(int _width, int _height)
 {
+    width = _width;
+    height = _height;
+
     display = XOpenDisplay(NULL);
 
     if(display == NULL)
@@ -22,10 +25,12 @@ Canvas::Canvas(int width, int height)
         exit(EXIT_FAILURE);
     }
 
-    win_attr.event_mask = ExposureMask | KeyPressMask;
+    win_attr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask |PointerMotionMask;
     win_attr.colormap   = XCreateColormap(display, root, vi_info->visual, AllocNone);
 
     window = XCreateWindow(display, root, 0, 0, width, height, 0, vi_info->depth, InputOutput, vi_info->visual, CWEventMask  | CWColormap, &win_attr);
+    //XGrabPointer(display, root, False, ButtonPressMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+    //XSelectInput(display, root, ButtonPressMask | ButtonReleaseMask) ;
 
     XMapWindow(display, window);
 
@@ -59,8 +64,8 @@ void Canvas::initOpenGL()
 void Canvas::refreshContext()
 {
     XWindowAttributes	w_attr;
-
     XGetWindowAttributes(display, window, &w_attr);
+
     glViewport(0, 0, w_attr.width, w_attr.height);
 }
 
@@ -116,6 +121,11 @@ void Canvas::updateTexture(const uint32_t &source, unsigned int dx, unsigned int
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void Canvas::repaint()
+{
+    XMapWindow(display, window);
+}
+
 void Canvas::draw()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -123,6 +133,31 @@ void Canvas::draw()
 
     if (!objects.empty())
     {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glColor3f(0.0, 1.0, 1.0);
+
+        glBegin(GL_LINES);
+
+        glVertex2f(-0.91,  0.91);
+        glVertex2f( 0.91,  0.91);
+
+        glVertex2f( 0.91,  0.91);
+        glVertex2f( 0.91, -0.61);
+
+        glVertex2f( 0.91, -0.61);
+        glVertex2f(-0.91, -0.61);
+
+        glVertex2f(-0.91, -0.61);
+        glVertex2f(-0.91,  0.91);
+
+        glVertex2f(-0.91, -0.71);
+        glVertex2f( 0.0 , -0.71);
+
+        glVertex2f(-0.91, -0.91);
+        glVertex2f( 0.0 , -0.91);
+
+        glEnd();
+
         glBindTexture(GL_TEXTURE_2D, texture_id);
         glBegin(GL_QUADS);
 

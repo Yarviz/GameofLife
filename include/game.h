@@ -6,19 +6,19 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <chrono>
+#include <thread>
+#include <cstring>
 
 #include "canvas.h"
 #include "cellmap.h"
-
-#define WIN_WIDTH   800
-#define WIN_HEIGHT  600
 
 using namespace std;
 
 class Game
 {
     public:
-        Game();
+        Game(int _width, int _height);
         virtual ~Game();
 
         void run();
@@ -26,8 +26,20 @@ class Game
     private:
         void init();
 
+        typedef struct {
+            bool button[2];
+            bool hold;
+            bool inside;
+            int  x;
+            int  y;
+        }Mouse;
+
         shared_ptr<Canvas>  canvas;
-        CellMap            *cellmap;
+        CellMap    *cellmap;
+        Mouse       mouse;
+        int         speed;
+        int         width, height;
+        int         cell_siz;
 };
 
 #endif // GAME_H
