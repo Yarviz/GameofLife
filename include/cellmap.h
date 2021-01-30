@@ -17,6 +17,14 @@
 #define LIVE              1
 #define DEAD              0
 
+#define X_START           -0.9
+#define X_END              0.9
+#define Y_START            0.9
+#define Y_END             -0.6
+#define X_SIZE             1.8
+#define Y_SIZE             1.5
+
+
 class CellMap : public CanvasObject
 {
     public:
@@ -27,11 +35,13 @@ class CellMap : public CanvasObject
         void setSize(int _width, int _height);
         void initCellMap();
         void animateCells();
+        void mouseClick(const int &x, const int &y, const int button);
 
     private:
         void checkCell(const int &x,const int &y, const int &n_cells);
         void countCenterCells(const int &x,const int &y);
         void countEdgeCells(const int &x,const int &y);
+        bool lookMouseInside(const int &x, const int &y);
 
         Canvas  *canvas;
 
@@ -48,6 +58,7 @@ class CellMap : public CanvasObject
         int      width;
         int      height;
         int      cur_gen, last_gen;
+        int      cmx, cmy;
         bool     animate;
 };
 

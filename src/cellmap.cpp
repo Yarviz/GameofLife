@@ -66,6 +66,39 @@ void CellMap::initCellMap()
     canvas->updateTexture(cellpic[0], 0, 0, width, height);
 }
 
+bool CellMap::lookMouseInside(const int &x, const int &y)
+{
+    float xf = -1.0 + (float)x / (float)canvas->getWindowWidth() * 2;
+    float yf =  1.0 - (float)y / (float)canvas->getWindowHeight() * 2;
+
+    if (xf < X_START || xf > X_END || yf > Y_START || yf < Y_END) return false;
+
+    cmx = (xf + -X_START) / (X_SIZE / width);
+    cmy = -(yf - Y_START) / (Y_SIZE / height);
+
+    return true;
+}
+
+void CellMap::mouseClick(const int &x, const int &y, const int button)
+{
+    if (!lookMouseInside(x, y)) return;
+
+    if (button == 0 && cellmap[cmx][cmy].cell[cur_gen] == DEAD)
+    {
+        cellmap[cmx][cmy].cell[last_gen] = LIVE;
+        cellmap[cmx][cmy].anim = MAX_COLORS - 1;
+        cellpic[cmy * width + cmx] = colors[MAX_COLORS - 1];
+    }
+    else if (button == 1 && cellmap[cmx][cmy].cell[cur_gen] == LIVE)
+    {
+        cellmap[cmx][cmy].cell[last_gen] = DEAD;
+        cellmap[cmx][cmy].anim = MAX_COLORS - 2;
+        cellpic[cmy * width + cmx] = colors[MAX_COLORS - 2];
+    }
+
+    canvas->updateTexture(cellpic[0], 0, 0, width, height);
+}
+
 void CellMap::checkCell(const int &x, const int &y, const int &n_cells)
 {
     if(cellmap[x][y].cell[last_gen] == LIVE)
@@ -127,7 +160,6 @@ void CellMap::animateCells()
 {
     int x, y, xx, yy, i;
     int cells;
-    last_gen = cur_gen ^ 1;
 
     for(y = 1; y < height - 1; y++)
         for(x = 1; x < width - 1; x++) countCenterCells(x, y);
@@ -145,6 +177,8 @@ void CellMap::animateCells()
     }
 
     cur_gen ^= 1;
+    last_gen ^= 1;
+
     canvas->updateTexture(cellpic[0], 0, 0, width, height);
 }
 
@@ -153,15 +187,15 @@ void CellMap::draw()
     float x_size =  (float)width / (float)TEXTURE_ATLAS_WIDTH;
     float y_size =  (float)height / (float)TEXTURE_ATLAS_HEIGHT;
 
-    glTexCoord2f(0.0, 0.0);
-    glVertex2f(-0.9,  0.9);
+    glTexCoord2f(atlas_x, atlas_y);
+    glVertex2f(X_START, Y_START);
 
-    glTexCoord2f(x_size, 0.0);
-    glVertex2f( 0.9,  0.9);
+    glTexCoord2f(atlas_x + x_size, atlas_y);
+    glVertex2f(X_END, Y_START);
 
-    glTexCoord2f(x_size, y_size);
-    glVertex2f( 0.9, -0.6);
+    glTexCoord2f(atlas_x + x_size, atlas_y + y_size);
+    glVertex2f(X_END, Y_END);
 
-    glTexCoord2f(0.0, y_size);
-    glVertex2f(-0.9, -0.6);
+    glTexCoord2f(atlas_x, atlas_y + y_size);
+    glVertex2f(X_START, Y_END);
 }

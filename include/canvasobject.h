@@ -5,6 +5,8 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
+#include "canvas.h"
+
 class CanvasObject
 {
     public:
@@ -12,8 +14,15 @@ class CanvasObject
         virtual ~CanvasObject();
 
         virtual void draw() {};
+        void setAtlasXY(int x, int y);
 
-    private:
+    protected:
+        void setAtlasSize(int width, int height);
+
+        float     atlas_x;
+        float     atlas_y;
+        float     atlas_width;
+        float     atlas_height;
 };
 
 #endif // CANVASOBJECT_H

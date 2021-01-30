@@ -29,8 +29,6 @@ Canvas::Canvas(int _width, int _height)
     win_attr.colormap   = XCreateColormap(display, root, vi_info->visual, AllocNone);
 
     window = XCreateWindow(display, root, 0, 0, width, height, 0, vi_info->depth, InputOutput, vi_info->visual, CWEventMask  | CWColormap, &win_attr);
-    //XGrabPointer(display, root, False, ButtonPressMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
-    //XSelectInput(display, root, ButtonPressMask | ButtonReleaseMask) ;
 
     XMapWindow(display, window);
 
@@ -66,7 +64,10 @@ void Canvas::refreshContext()
     XWindowAttributes	w_attr;
     XGetWindowAttributes(display, window, &w_attr);
 
-    glViewport(0, 0, w_attr.width, w_attr.height);
+    w_width = w_attr.width;
+    w_height = w_attr.height;
+
+    glViewport(0, 0, w_width, w_height);
 }
 
 void Canvas::destroy()
@@ -83,9 +84,24 @@ void Canvas::setTitle(const char *title)
     XStoreName(display, window, title);
 }
 
-void Canvas::addChild(CanvasObject *object)
+void Canvas::addChild(CanvasObject *object, int width, int height)
 {
     objects.push_back(object);
+
+    if (atlas_x + width > TEXTURE_ATLAS_WIDTH)
+    {
+        atlas_x = 0;
+        atlas_y += height;
+    }
+
+    object->setAtlasXY(atlas_x, atlas_y);
+    atlas_x += width;
+
+    if (atlas_x > TEXTURE_ATLAS_WIDTH)
+    {
+        atlas_x = 0;
+        atlas_y += height;
+    }
 }
 
 void Canvas::removeChild(CanvasObject *object)
@@ -112,6 +128,9 @@ void Canvas::createTextureAtlas()
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_ATLAS_WIDTH, TEXTURE_ATLAS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    atlas_x = 0;
+    atlas_y = 0;
 }
 
 void Canvas::updateTexture(const uint32_t &source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh)

@@ -14,6 +14,7 @@
 #define TEXTURE_ATLAS_HEIGHT    1024
 
 using namespace std;
+class CanvasObject;
 
 class Canvas
 {
@@ -26,12 +27,14 @@ class Canvas
         void refreshContext();
         void draw();
         void repaint();
-        void addChild(CanvasObject *object);
+        void addChild(CanvasObject *object, int width, int height);
         void removeChild(CanvasObject *object);
         void updateTexture(const uint32_t &source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh);
 
         int getWidth() {return width;}
         int getHeight() {return height;}
+        int getWindowWidth() {return w_width;}
+        int getWindowHeight() {return w_height;}
 
         Display* getDisplay() {return display;}
         Window* getWindow() {return &window;}
@@ -51,6 +54,8 @@ class Canvas
 
         GLuint                  texture_id;
         int                     width, height;
+        int                     w_width, w_height;
+        int                     atlas_x, atlas_y;
 };
 
 #endif // CANVAS_H

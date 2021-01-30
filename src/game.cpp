@@ -39,7 +39,7 @@ void Game::run()
 
     long mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
 
-    canvas->addChild(cellmap);
+    canvas->addChild(cellmap, CELL_MAP_WIDTH, CELL_MAP_HEIGHT);
 
     chrono::duration<long, ratio<1,60>> fps_tick(1);
     auto frame_timer = chrono::high_resolution_clock::now();
@@ -81,11 +81,12 @@ void Game::run()
                 case MotionNotify:
                     mouse.x = xevent.xmotion.x;
                     mouse.y = xevent.xmotion.y;
-                    cout << mouse.x << " " << mouse.y << endl;
+                    //cout << mouse.x << " " << mouse.y << endl;
                     break;
 
                 case ButtonPress:
                     xevent.xbutton.button == 1 ? mouse.button[0] = 1 : mouse.button[1] = 1;
+                    //cout << mouse.x << " " << mouse.y << endl;
                     break;
 
                 case ButtonRelease:
@@ -93,6 +94,9 @@ void Game::run()
                     break;
             }
         }
+
+        if (mouse.button[0]) cellmap->mouseClick(mouse.x, mouse.y, 0);
+            else if (mouse.button[1]) cellmap->mouseClick(mouse.x, mouse.y, 1);
 
         if (++speed_cnt >= speed)
         {
