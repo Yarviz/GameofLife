@@ -10,6 +10,7 @@ Game::Game(int _width, int _height)
 
 Game::~Game()
 {
+    delete(labelSize);
     delete(cellmap);
 }
 
@@ -23,6 +24,21 @@ void Game::init()
     cellmap = new CellMap(canvas.get());
     cellmap->setSize(cell_siz, cell_siz);
     cellmap->initCellMap();
+
+    labelSize = new Label(canvas.get(), 80, 5);
+    labelSize->setText("SIZE: 64 X 64");
+    labelSize->setXY(50, canvas->getHeight() - 150, 2);
+
+    labelSpeed = new Label(canvas.get(), 80, 5);
+    labelSpeed->setText("SPEED: 60 FPS");
+    labelSpeed->setXY(50, canvas->getHeight() - 80, 2);
+
+    canvas->addChild(cellmap, CELL_MAP_WIDTH, CELL_MAP_HEIGHT);
+    canvas->addChild(labelSize, 80, 5);
+    canvas->addChild(labelSpeed, 80, 5);
+
+    labelSize->uploadText();
+    labelSpeed->uploadText();
 
     speed = 2;
     memset(&mouse, 0, sizeof(mouse));
@@ -38,8 +54,6 @@ void Game::run()
     int speed_cnt = 0;
 
     long mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
-
-    canvas->addChild(cellmap, CELL_MAP_WIDTH, CELL_MAP_HEIGHT);
 
     chrono::duration<long, ratio<1,60>> fps_tick(1);
     auto frame_timer = chrono::high_resolution_clock::now();
@@ -65,14 +79,26 @@ void Game::run()
                     switch(XLookupKeysym(&xevent.xkey, 0))
                     {
                         case XK_Escape: running = false; break;
-                        case XK_q: speed < 60 ? ++speed : 0; break;
-                        case XK_a: speed > 1 ? --speed : 0; break;
+                        case XK_q:
+                            speed < 60 ? ++speed : 0;
+                            labelSpeed->setText("SPEED: " + to_string(61 - speed) + " FPS");
+                            labelSpeed->uploadText();
+                            break;
+                        case XK_a:
+                            speed > 1 ? --speed : 0;
+                            labelSpeed->setText("SPEED: " + to_string(61 - speed) + " FPS");
+                            labelSpeed->uploadText();
+                            break;
                         case XK_w:
                             cell_siz < CELL_MAP_WIDTH ? cell_siz += 1 : 0;
+                            labelSize->setText("SIZE: " + to_string(cell_siz) + " X " + to_string(cell_siz));
+                            labelSize->uploadText();
                             cellmap->setSize(cell_siz, cell_siz);
                             break;
                         case XK_s:
                             cell_siz > 3 ? cell_siz -= 1 : 0;
+                            labelSize->setText("SIZE: " + to_string(cell_siz) + " X " + to_string(cell_siz));
+                            labelSize->uploadText();
                             cellmap->setSize(cell_siz, cell_siz);
                             break;
                     }
@@ -81,12 +107,10 @@ void Game::run()
                 case MotionNotify:
                     mouse.x = xevent.xmotion.x;
                     mouse.y = xevent.xmotion.y;
-                    //cout << mouse.x << " " << mouse.y << endl;
                     break;
 
                 case ButtonPress:
                     xevent.xbutton.button == 1 ? mouse.button[0] = 1 : mouse.button[1] = 1;
-                    //cout << mouse.x << " " << mouse.y << endl;
                     break;
 
                 case ButtonRelease:

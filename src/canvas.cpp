@@ -31,6 +31,7 @@ Canvas::Canvas(int _width, int _height)
     window = XCreateWindow(display, root, 0, 0, width, height, 0, vi_info->depth, InputOutput, vi_info->visual, CWEventMask  | CWColormap, &win_attr);
 
     XMapWindow(display, window);
+    gc = XDefaultGC(display, 0);
 
     initOpenGL();
 }
@@ -127,17 +128,20 @@ void Canvas::createTextureAtlas()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_ATLAS_WIDTH, TEXTURE_ATLAS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 
     atlas_x = 0;
     atlas_y = 0;
 }
 
-void Canvas::updateTexture(const uint32_t &source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh)
+void Canvas::updateTexture(const uint32_t *source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh)
 {
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, (void *)&source);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, (void *)source);
+}
+
+Pixmap Canvas::createPixmap(int width, int height)
+{
+    return XCreatePixmap(display, root, width, height, vi_info->depth);
 }
 
 void Canvas::repaint()
@@ -169,11 +173,11 @@ void Canvas::draw()
         glVertex2f(-0.91, -0.61);
         glVertex2f(-0.91,  0.91);
 
-        glVertex2f(-0.91, -0.71);
-        glVertex2f( 0.0 , -0.71);
+        glVertex2f(-0.91, -0.75);
+        glVertex2f( 0.0 , -0.75);
 
-        glVertex2f(-0.91, -0.91);
-        glVertex2f( 0.0 , -0.91);
+        glVertex2f(-0.91, -0.90);
+        glVertex2f( 0.0 , -0.90);
 
         glEnd();
 

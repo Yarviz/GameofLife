@@ -17,12 +17,17 @@ class CanvasObject
         void setAtlasXY(int x, int y);
 
     protected:
-        void setAtlasSize(int width, int height);
+        void setAtlasPos(int width, int height);
 
-        float     atlas_x;
-        float     atlas_y;
-        float     atlas_width;
-        float     atlas_height;
+        int       atlas_x;
+        int       atlas_y;
+        int       atlas_width;
+        int       atlas_height;
+
+        float     tex_x;
+        float     tex_y;
+        float     tex_x2;
+        float     tex_y2;
 };
 
 #endif // CANVASOBJECT_H

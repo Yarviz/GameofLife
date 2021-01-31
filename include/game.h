@@ -9,9 +9,11 @@
 #include <chrono>
 #include <thread>
 #include <cstring>
+#include <string>
 
 #include "canvas.h"
 #include "cellmap.h"
+#include "label.h"
 
 using namespace std;
 
@@ -36,6 +38,8 @@ class Game
 
         shared_ptr<Canvas>  canvas;
         CellMap    *cellmap;
+        Label      *labelSize;
+        Label      *labelSpeed;
         Mouse       mouse;
         int         speed;
         int         width, height;

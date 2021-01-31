@@ -63,7 +63,7 @@ void CellMap::initCellMap()
         }
     }
 
-    canvas->updateTexture(cellpic[0], 0, 0, width, height);
+    canvas->updateTexture(&cellpic[0], 0, 0, width, height);
 }
 
 bool CellMap::lookMouseInside(const int &x, const int &y)
@@ -96,7 +96,7 @@ void CellMap::mouseClick(const int &x, const int &y, const int button)
         cellpic[cmy * width + cmx] = colors[MAX_COLORS - 2];
     }
 
-    canvas->updateTexture(cellpic[0], 0, 0, width, height);
+    canvas->updateTexture(&cellpic[0], 0, 0, width, height);
 }
 
 void CellMap::checkCell(const int &x, const int &y, const int &n_cells)
@@ -179,7 +179,7 @@ void CellMap::animateCells()
     cur_gen ^= 1;
     last_gen ^= 1;
 
-    canvas->updateTexture(cellpic[0], 0, 0, width, height);
+    canvas->updateTexture(&cellpic[0], 0, 0, width, height);
 }
 
 void CellMap::draw()
