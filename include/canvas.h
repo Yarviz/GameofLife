@@ -10,8 +10,8 @@
 
 #include "canvasobject.h"
 
-#define TEXTURE_ATLAS_WIDTH     1024
-#define TEXTURE_ATLAS_HEIGHT    1024
+#define TEXTURE_ATLAS_WIDTH     2048
+#define TEXTURE_ATLAS_HEIGHT    512
 
 using namespace std;
 class CanvasObject;

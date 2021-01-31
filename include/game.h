@@ -14,6 +14,7 @@
 #include "canvas.h"
 #include "cellmap.h"
 #include "label.h"
+#include "slide.h"
 
 using namespace std;
 
@@ -26,7 +27,8 @@ class Game
         void run();
 
     private:
-        void init();
+        void   init();
+        string toHex(uint32_t value, int len);
 
         typedef struct {
             bool button[2];
@@ -40,6 +42,10 @@ class Game
         CellMap    *cellmap;
         Label      *labelSize;
         Label      *labelSpeed;
+        Label      *labelColor;
+        Slide      *slideSize;
+        Slide      *slideSpeed;
+        Slide      *slideColor;
         Mouse       mouse;
         int         speed;
         int         width, height;

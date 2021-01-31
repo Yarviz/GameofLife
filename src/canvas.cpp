@@ -91,8 +91,8 @@ void Canvas::addChild(CanvasObject *object, int width, int height)
 
     if (atlas_x + width > TEXTURE_ATLAS_WIDTH)
     {
-        atlas_x = 0;
-        atlas_y += height;
+        atlas_x = 512;
+        atlas_y += 64;
     }
 
     object->setAtlasXY(atlas_x, atlas_y);
@@ -100,8 +100,8 @@ void Canvas::addChild(CanvasObject *object, int width, int height)
 
     if (atlas_x > TEXTURE_ATLAS_WIDTH)
     {
-        atlas_x = 0;
-        atlas_y += height;
+        atlas_x = 512;
+        atlas_y += 64;
     }
 }
 
@@ -161,23 +161,26 @@ void Canvas::draw()
 
         glBegin(GL_LINES);
 
-        glVertex2f(-0.91,  0.91);
-        glVertex2f( 0.91,  0.91);
+        glVertex2f(-0.91,  0.61);
+        glVertex2f( 0.91,  0.61);
 
-        glVertex2f( 0.91,  0.91);
-        glVertex2f( 0.91, -0.61);
+        glVertex2f( 0.91,  0.61);
+        glVertex2f( 0.91, -0.91);
 
-        glVertex2f( 0.91, -0.61);
-        glVertex2f(-0.91, -0.61);
+        glVertex2f( 0.91, -0.91);
+        glVertex2f(-0.91, -0.91);
 
-        glVertex2f(-0.91, -0.61);
-        glVertex2f(-0.91,  0.91);
+        glVertex2f(-0.91, -0.91);
+        glVertex2f(-0.91,  0.61);
 
-        glVertex2f(-0.91, -0.75);
-        glVertex2f( 0.0 , -0.75);
+        glVertex2f(-0.91,  0.90);
+        glVertex2f(-0.41,  0.90);
 
-        glVertex2f(-0.91, -0.90);
-        glVertex2f( 0.0 , -0.90);
+        glVertex2f(-0.25,  0.90);
+        glVertex2f( 0.25,  0.90);
+
+        glVertex2f( 0.91,  0.90);
+        glVertex2f( 0.41,  0.90);
 
         glEnd();
 

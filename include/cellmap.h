@@ -19,10 +19,12 @@
 
 #define X_START           -0.9
 #define X_END              0.9
-#define Y_START            0.9
-#define Y_END             -0.6
+#define Y_START            0.6
+#define Y_END             -0.9
 #define X_SIZE             1.8
 #define Y_SIZE             1.5
+
+#define CELL_COLOR         0xffffff
 
 
 class CellMap : public CanvasObject
@@ -36,6 +38,8 @@ class CellMap : public CanvasObject
         void initCellMap();
         void animateCells();
         void mouseClick(const int &x, const int &y, const int button);
+        void setCellColor(uint8_t r, uint8_t g, uint8_t b);
+        uint32_t getColor() {return colors[1];}
 
     private:
         void checkCell(const int &x,const int &y, const int &n_cells);

@@ -14,6 +14,7 @@ class CanvasObject
         virtual ~CanvasObject();
 
         virtual void draw() {};
+
         void setAtlasXY(int x, int y);
 
     protected:

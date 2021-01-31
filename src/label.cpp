@@ -6,7 +6,7 @@ Label::Label(Canvas *canvas_, int _width, int _height)
     width = _width;
     height = _height;
 
-    text_area.resize(width * height, 1);
+    text_area.resize(width * height, 0);
 
     font.loadFonts();
 }
@@ -16,12 +16,12 @@ Label::~Label()
     //
 }
 
-void Label::setText(string _text)
+void Label::setText(string _text, uint32_t color)
 {
     text = _text;
 
     memset(text_area.data(), 0, sizeof(uint32_t) * text_area.size());
-    font.text(text, text_area.data(), 0, 0, width, height);
+    font.text(text, text_area.data(), 0, 0, width, height, color);
 
     t_width = text.size() * 4;
 }

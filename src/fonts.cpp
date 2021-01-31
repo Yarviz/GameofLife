@@ -1,4 +1,4 @@
-#include "font.h"
+#include "fonts.h"
 
 bool        Fonts::inited = false;
 uint16_t    Fonts::font_data[FONTS];
@@ -79,7 +79,7 @@ void Fonts::initFonts()
     inited = true;
 }
 
-void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int height)
+void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color)
 {
     int xx, yy;
     int ch;
@@ -88,7 +88,7 @@ void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int
     uint32_t col[2] = {
 
         0xff000000,
-        0xff00ffff
+        color
     };
 
     for (const char &c: txt)

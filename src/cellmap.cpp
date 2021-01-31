@@ -11,22 +11,9 @@ CellMap::CellMap(Canvas *canvas_)
         { 1,  0}, {-1,  1}, { 0,  1}, { 1,  1}
     };
 
-    uint32_t col[] = {
-        0xff000000,
-        0xff111111,
-        0xff222222,
-        0xff333333,
-        0xff444444,
-        0xff555555,
-        0xff666666,
-        0xffffffff
-    };
-
-    memcpy(&a_colors, &col, sizeof(col));
     memcpy(&add_xy, &_add_xy, sizeof(_add_xy));
 
-    colors[0] = a_colors[0];
-    colors[1] = a_colors[7];
+    setCellColor(0, 0, 255);
 
     srand(time(NULL));
     cur_gen = 1;
@@ -39,6 +26,27 @@ CellMap::CellMap(Canvas *canvas_)
 CellMap::~CellMap()
 {
     //dtor
+}
+
+void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
+{
+    a_colors[0] = 0xff000000;
+    a_colors[MAX_COLORS - 1] = 0xff000000 | (b << 16) | (g << 8) | r;
+
+    float xp = 0.3;
+
+    for (int i = MAX_COLORS - 2; i > 0; i--)
+    {
+        a_colors[i] = 0xff000000;
+        a_colors[i] |= (uint32_t)((float)b * xp) << 16;
+        a_colors[i] |= (uint32_t)((float)g * xp) << 8;
+        a_colors[i] |= (uint32_t)((float)r * xp);
+
+        xp -= 0.3 / (MAX_COLORS);
+    }
+
+    colors[0] = a_colors[0];
+    colors[1] = a_colors[7];
 }
 
 void CellMap::setSize(int _width, int _height)
@@ -87,13 +95,13 @@ void CellMap::mouseClick(const int &x, const int &y, const int button)
     {
         cellmap[cmx][cmy].cell[last_gen] = LIVE;
         cellmap[cmx][cmy].anim = MAX_COLORS - 1;
-        cellpic[cmy * width + cmx] = colors[MAX_COLORS - 1];
+        cellpic[cmy * width + cmx] = colors[1];
     }
     else if (button == 1 && cellmap[cmx][cmy].cell[cur_gen] == LIVE)
     {
         cellmap[cmx][cmy].cell[last_gen] = DEAD;
         cellmap[cmx][cmy].anim = MAX_COLORS - 2;
-        cellpic[cmy * width + cmx] = colors[MAX_COLORS - 2];
+        cellpic[cmy * width + cmx] = a_colors[MAX_COLORS - 2];
     }
 
     canvas->updateTexture(&cellpic[0], 0, 0, width, height);

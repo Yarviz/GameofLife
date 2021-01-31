@@ -10,7 +10,7 @@
 
 #include "canvasobject.h"
 #include "canvas.h"
-#include "font.h"
+#include "fonts.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ class Label : public CanvasObject
         Label(Canvas *canvas_, int _width, int _height);
         virtual ~Label();
 
-        void setText(string _text);
+        void setText(string _text, uint32_t color);
         void setXY(int _x, int _y, int siz);
         void uploadText();
         void draw();

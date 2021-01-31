@@ -1,5 +1,5 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef FONTS_H
+#define FONTS_H
 
 #include <iostream>
 #include <fstream>
@@ -18,7 +18,7 @@ class Fonts
         virtual ~Fonts();
 
         bool loadFonts();
-        void text(const string &txt, uint32_t *dest, int x, int y, int width, int height);
+        void text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color);
 
     private:
         void initFonts();
@@ -28,4 +28,4 @@ class Fonts
         static int         font_num[128];
 };
 
-#endif // FONT_H
+#endif // FONTS_H
