@@ -31,6 +31,7 @@ class Label : public CanvasObject
 
         vector<uint32_t> text_area;
         string   text;
+        int      text_size;
         int      x, y;
         float    xf1, xf2;
         float    yf1, yf2;

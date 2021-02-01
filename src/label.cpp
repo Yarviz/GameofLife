@@ -22,6 +22,7 @@ void Label::setText(string _text, uint32_t color)
     Fonts::text(text, text_area.data(), 0, 0, width, height, color);
 
     t_width = text.size() * 4;
+    setXY(x, y, text_size);
 }
 
 void Label::uploadText()
@@ -37,6 +38,7 @@ void Label::setXY(int _x, int _y, int siz)
 {
     x = _x;
     y = _y;
+    text_size = siz;
 
     xf1 = -1.0 + (float)x / (float)canvas->getWidth() * 2;
     xf2 = -1.0 + (float)(x + t_width * siz) / (float)canvas->getWidth() * 2;
