@@ -136,27 +136,33 @@ string Game::toHex(uint32_t value, int len)
 
 void Game::run()
 {
+    // Set display window to accept closing event
     Atom wmDeleteMessage = XInternAtom(canvas->getDisplay(), "WM_DELETE_WINDOW", False);
     XSetWMProtocols(canvas->getDisplay(), *canvas->getWindow(), &wmDeleteMessage, 1);
 
     XEvent xevent;
-    bool running = true;
-    bool stopped = false;
+    bool running = true;        // program running
+    bool stopped = false;       // cell animation stopped
 
     float speed_cnt = 1.0;
     float speed_dec = (float)speed / 60.0;
-    int item;
+    int item;                   // variable to store values from slides
 
+    // Masks for accepted events
     long mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
 
+    // Initialize frame timer
     chrono::duration<long, ratio<1,60>> fps_tick(1);
     auto frame_timer = chrono::high_resolution_clock::now();
 
+    // Game main loop
     while(running)
     {
+        // Restart frame timer
         frame_timer = chrono::high_resolution_clock::now();
         item = -1;
 
+        // Check if window have events to handle
         while (XCheckWindowEvent(canvas->getDisplay(), *canvas->getWindow(), mask, &xevent))
         {
             switch(xevent.type)
