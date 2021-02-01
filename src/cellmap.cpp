@@ -107,6 +107,8 @@ void CellMap::setSize(int _width, int _height)
 {
     width = _width;
     height = _height;
+
+    updateCellMapColors();
 }
 
 void CellMap::toggleAnimate()
@@ -186,13 +188,13 @@ void CellMap::mouseClick(const int &x, const int &y, const int button)
 {
     if (!lookMouseInside(x, y)) return;
 
-    if (button == 0 && cellmap[cmx][cmy].cell[cur_gen] == DEAD)
+    if (button == 0)
     {
         cellmap[cmx][cmy].cell[last_gen] = LIVE;
         cellmap[cmx][cmy].anim = MAX_COLORS - 1;
         cellpic[cmy * width + cmx] = colors[1];
     }
-    else if (button == 1 && cellmap[cmx][cmy].cell[cur_gen] == LIVE)
+    else if (button == 1)
     {
         cellmap[cmx][cmy].cell[last_gen] = DEAD;
         cellmap[cmx][cmy].anim = MAX_COLORS - 2;
