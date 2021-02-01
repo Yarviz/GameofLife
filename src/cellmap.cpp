@@ -48,7 +48,7 @@ void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
     }
 
     colors[0] = a_colors[0];
-    colors[1] = a_colors[7];
+    colors[1] = a_colors[MAX_COLORS - 1];
 
     update = true;
 }
@@ -113,9 +113,7 @@ void CellMap::toggleAnimate()
 {
     animate ^= 1;
 
-    if (!animate) clearCellMap(false);
-
-    update = true;
+    updateCellMapColors();
 }
 
 void CellMap::updateCellMapColors()
@@ -124,7 +122,7 @@ void CellMap::updateCellMapColors()
     {
         for (int x = 0; x < height; x++)
         {
-            cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
+            animate ? cellpic[y * width + x] = a_colors[cellmap[x][y].anim] : cellpic[y * width + x] = colors[cellmap[x][y].cell[last_gen]];
         }
     }
 
@@ -214,7 +212,7 @@ void CellMap::checkCell(const int &x, const int &y, const int &n_cells)
     else if (n_cells == 3)
     {
         cellmap[x][y].cell[cur_gen] = LIVE;
-        animate ? cellmap[x][y].anim = MAX_COLORS - 1 : 0;
+        cellmap[x][y].anim = MAX_COLORS - 1;
     }
     else cellmap[x][y].cell[cur_gen] = DEAD;
 }
@@ -227,9 +225,9 @@ void CellMap::countCenterCells(const int &x, const int &y)
 
     checkCell(x, y, cells);
 
+    if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
     if (animate)
     {
-        if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
         cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
     }
     else cellpic[y * width + x] = colors[cellmap[x][y].cell[cur_gen]];
@@ -253,9 +251,9 @@ void CellMap::countEdgeCells(const int &x, const int &y)
 
     checkCell(x, y, cells);
 
+    if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
     if (animate)
     {
-        if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
         cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
     }
     else cellpic[y * width + x] = colors[cellmap[x][y].cell[cur_gen]];

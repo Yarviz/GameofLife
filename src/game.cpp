@@ -150,38 +150,8 @@ void Game::run()
                     canvas->refreshContext();
                     break;
 
-                case ClientMessage:
-                    if (xevent.xclient.data.l[0] == wmDeleteMessage)
-                    running = false;
-                    break;
-
                 case KeyPress:
-                    switch(XLookupKeysym(&xevent.xkey, 0))
-                    {
-                        case XK_Escape: running = false; break;
-                        case XK_q:
-                            speed < 60 ? ++speed : 0;
-                            labelSpeed->setText("SPEED: " + to_string(speed) + " FPS", 0xff00ffff);
-                            labelSpeed->uploadText();
-                            break;
-                        case XK_a:
-                            speed > 1 ? --speed : 0;
-                            labelSpeed->setText("SPEED: " + to_string(speed) + " FPS", 0xff00ffff);
-                            labelSpeed->uploadText();
-                            break;
-                        case XK_w:
-                            cell_siz < CELL_MAP_WIDTH ? cell_siz += 1 : 0;
-                            labelSize->setText("SIZE: " + to_string(cell_siz) + " X " + to_string(cell_siz), 0xff00ffff);
-                            labelSize->uploadText();
-                            cellmap->setSize(cell_siz, cell_siz);
-                            break;
-                        case XK_s:
-                            cell_siz > 3 ? cell_siz -= 1 : 0;
-                            labelSize->setText("SIZE: " + to_string(cell_siz) + " X " + to_string(cell_siz), 0xff00ffff);
-                            labelSize->uploadText();
-                            cellmap->setSize(cell_siz, cell_siz);
-                            break;
-                    }
+                    if (XLookupKeysym(&xevent.xkey, 0) == XK_Escape) running = false;
                     break;
 
                 case MotionNotify:
@@ -276,6 +246,9 @@ void Game::run()
                     break;
             }
         }
+
+        if (XCheckTypedWindowEvent(canvas->getDisplay(), *canvas->getWindow(), ClientMessage, &xevent))
+            if (xevent.xclient.data.l[0] == wmDeleteMessage) running = false;
 
         if (item == -1)
         {
