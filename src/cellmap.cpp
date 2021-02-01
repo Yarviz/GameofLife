@@ -13,12 +13,13 @@ CellMap::CellMap(Canvas *canvas_)
 
     memcpy(&add_xy, &_add_xy, sizeof(_add_xy));
 
-    setCellColor(0, 0, 255);
+    setCellColor(255, 255, 255);
+    initColorWheel();
 
     srand(time(NULL));
     cur_gen = 1;
     last_gen = 0;
-    animate = true;
+    animate = 1;
 
     initCellMap();
 }
@@ -49,6 +50,55 @@ void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
     colors[1] = a_colors[7];
 }
 
+void CellMap::setColorWheelColor(int i)
+{
+    if (i > COLOR_WHEEL_SIZE) return;
+
+    setCellColor(color_wheel[i].r, color_wheel[i].g, color_wheel[i].b);
+}
+
+void CellMap::initColorWheel()
+{
+    float exp = (256.0 * 7 + 5) / (float)COLOR_WHEEL_SIZE;
+
+    float rgb_add[7][3] = {{ 0, exp,   0}, {-exp,  0,  0}, {  0,  0, exp},
+                           { 0,-exp,   0}, { exp,  0,  0}, {  0,  0,-exp},
+                           { 0, exp, exp}};
+
+    float rbg_col[3] = {255, 0, 0};
+    int i, i2, cnt = 0;
+    bool next = false;
+
+    for (i = 0; i < COLOR_WHEEL_SIZE; i++)
+    {
+        color_wheel[i].r = (int)rbg_col[0];
+        color_wheel[i].g = (int)rbg_col[1];
+        color_wheel[i].b = (int)rbg_col[2];
+
+        for (i2 = 0; i2 < 3; i2++)
+        {
+            rbg_col[i2] += rgb_add[cnt][i2];
+
+            if (rbg_col[i2] < 0)
+            {
+                rbg_col[i2] = 0;
+                next = true;
+            }
+            else if (rbg_col[i2] > 255)
+            {
+                rbg_col[i2] = 255;
+                next = true;
+            }
+        }
+
+        if (next)
+        {
+            next = false;
+            ++cnt;
+        }
+    }
+}
+
 void CellMap::setSize(int _width, int _height)
 {
     width = _width;
@@ -76,8 +126,8 @@ void CellMap::initCellMap()
 
 bool CellMap::lookMouseInside(const int &x, const int &y)
 {
-    float xf = -1.0 + (float)x / (float)canvas->getWindowWidth() * 2;
-    float yf =  1.0 - (float)y / (float)canvas->getWindowHeight() * 2;
+    float xf = GL_MX(x);
+    float yf = GL_MY(y);
 
     if (xf < X_START || xf > X_END || yf > Y_START || yf < Y_END) return false;
 
@@ -130,9 +180,9 @@ void CellMap::countCenterCells(const int &x, const int &y)
 
     checkCell(x, y, cells);
 
+    if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
     if (animate)
     {
-        if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
         cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
     }
     else cellpic[y * width + x] = colors[cellmap[x][y].cell[cur_gen]];

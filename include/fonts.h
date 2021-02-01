@@ -17,11 +17,11 @@ class Fonts
         Fonts();
         virtual ~Fonts();
 
-        bool loadFonts();
-        void text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color);
+        static bool loadFonts();
+        static void text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color, bool middle = false);
 
     private:
-        void initFonts();
+        static void initFonts();
 
         static bool        inited;
         static uint16_t    font_data[FONTS];

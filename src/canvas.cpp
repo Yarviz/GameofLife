@@ -55,7 +55,7 @@ void Canvas::initOpenGL()
     refreshContext();
 
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
+    //glDisable(GL_BLEND);
 
     createTextureAtlas();
 }
@@ -137,11 +137,6 @@ void Canvas::createTextureAtlas()
 void Canvas::updateTexture(const uint32_t *source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh)
 {
     glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, (void *)source);
-}
-
-Pixmap Canvas::createPixmap(int width, int height)
-{
-    return XCreatePixmap(display, root, width, height, vi_info->depth);
 }
 
 void Canvas::repaint()

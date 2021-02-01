@@ -7,6 +7,12 @@
 
 #include "canvas.h"
 
+#define GL_X(x)     (-1.0 + (float)(x) / (float)canvas->getWidth() * 2)
+#define GL_Y(y)     (1.0 - (float)(y) / (float)canvas->getHeight() * 2)
+
+#define GL_MX(x)     (-1.0 + (float)(x) / (float)canvas->getWindowWidth() * 2)
+#define GL_MY(y)     (1.0 - (float)(y) / (float)canvas->getWindowHeight() * 2)
+
 class CanvasObject
 {
     public:
@@ -18,7 +24,7 @@ class CanvasObject
         void setAtlasXY(int x, int y);
 
     protected:
-        void setAtlasPos(int width, int height);
+        void setAtlasPos(int x, int y, int width, int height);
 
         int       atlas_x;
         int       atlas_y;

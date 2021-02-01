@@ -5,6 +5,7 @@ Game::Game(int _width, int _height)
     width = _width;
     height = _height;
 
+    Fonts::loadFonts();
     init();
 }
 
@@ -16,6 +17,11 @@ Game::~Game()
     delete(slideSize);
     delete(slideSpeed);
     delete(slideColor);
+    delete(buttonShadows);
+    delete(buttonClear);
+    delete(buttonRandom);
+    delete(buttonStop);
+    delete(buttonStep);
     delete(cellmap);
 }
 
@@ -61,7 +67,7 @@ void Game::init()
 
     slideColor = new Slide(canvas.get());
     slideColor->setXY(740, 32, 2);
-    slideColor->setSlidePos(564, 740, 64, 16777215);
+    slideColor->setSlidePos(564, 740, 0, 175);
 
     canvas->addChild(slideSize, SLIDE_WIDTH, SLIDE_HEIGHT);
     canvas->addChild(slideSpeed, SLIDE_WIDTH, SLIDE_HEIGHT);
@@ -70,6 +76,35 @@ void Game::init()
     slideSize->uploadImage();
     slideSpeed->uploadImage();
     slideColor->uploadImage();
+
+    buttonShadows= new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "SHADOWS: ON", 0xffffff);
+    buttonShadows->setXY(36, 90, 2);
+
+    buttonClear = new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "CLEAR", 0xffffff);
+    buttonClear->setXY(186, 90, 2);
+
+    buttonRandom = new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "RANDOM", 0xffffff);
+    buttonRandom->setXY(336, 90, 2);
+
+    buttonStop = new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "STOP", 0xffffff);
+    buttonStop->setXY(486, 90, 2);
+
+    buttonStep = new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "STEP", 0xffffff);
+    buttonStep->setXY(634, 90, 2);
+
+    canvas->addChild(buttonShadows, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+    canvas->addChild(buttonClear, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+    canvas->addChild(buttonRandom, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+    canvas->addChild(buttonStop, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+    canvas->addChild(buttonStep, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+
+    buttonShadows->uploadImage();
+    buttonClear->uploadImage();
+    buttonRandom->uploadImage();
+    buttonStop->uploadImage();
+    buttonStep->uploadImage();
+
+    buttonStep->setState(false);
 
     speed = 60;
     memset(&mouse, 0, sizeof(mouse));
@@ -103,6 +138,7 @@ void Game::run()
     while(running)
     {
         frame_timer = chrono::high_resolution_clock::now();
+        item = -1;
 
         while (XCheckWindowEvent(canvas->getDisplay(), *canvas->getWindow(), mask, &xevent))
         {
@@ -150,8 +186,14 @@ void Game::run()
                     mouse.x = xevent.xmotion.x;
                     mouse.y = xevent.xmotion.y;
 
+                    buttonShadows->mouseMove(mouse.x, mouse.y);
+                    buttonClear->mouseMove(mouse.x, mouse.y);
+                    buttonRandom->mouseMove(mouse.x, mouse.y);
+                    buttonStop->mouseMove(mouse.x, mouse.y);
+                    buttonStep->mouseMove(mouse.x, mouse.y);
+
                     item = slideSize->mouseMove(mouse.x);
-                    if (item > 0)
+                    if (item > -1)
                     {
                         cell_siz = item;
 
@@ -162,7 +204,7 @@ void Game::run()
                     }
 
                     item = slideSpeed->mouseMove(mouse.x);
-                    if (item > 0)
+                    if (item > -1)
                     {
                         speed = item;
 
@@ -172,11 +214,11 @@ void Game::run()
                     }
 
                     item = slideColor->mouseMove(mouse.x);
-                    if (item > 0)
+                    if (item > -1)
                     {
-                        cellmap->setCellColor(item & 0xff, (item >> 8) & 0xff, (item >> 16));
+                        cellmap->setColorWheelColor(item);
 
-                        labelColor->setText("COLOR: " + toHex(item, 6), cellmap->getColor());
+                        labelColor->setText("COLOR: " + toHex(cellmap->getColor() & 0xffffff, 6), cellmap->getColor());
                         labelColor->uploadText();
                         break;
                     }
@@ -188,6 +230,12 @@ void Game::run()
                     slideSize->mouseClick(mouse.x, mouse.y);
                     slideSpeed->mouseClick(mouse.x, mouse.y);
                     slideColor->mouseClick(mouse.x, mouse.y);
+
+                    buttonShadows->mouseClick(mouse.x, mouse.y);
+                    buttonClear->mouseClick(mouse.x, mouse.y);
+                    buttonRandom->mouseClick(mouse.x, mouse.y);
+                    buttonStop->mouseClick(mouse.x, mouse.y);
+                    buttonStep->mouseClick(mouse.x, mouse.y);
                     break;
 
                 case ButtonRelease:
@@ -196,12 +244,21 @@ void Game::run()
                     slideSize->mouseRelease();
                     slideSpeed->mouseRelease();
                     slideColor->mouseRelease();
+
+                    if (buttonShadows->mouseRelease()) cellmap->setAnimate();
+                    buttonClear->mouseRelease();
+                    buttonRandom->mouseRelease();
+                    buttonStop->mouseRelease();
+                    buttonStep->mouseRelease();
                     break;
             }
         }
 
-        if (mouse.button[0]) cellmap->mouseClick(mouse.x, mouse.y, 0);
-            else if (mouse.button[1]) cellmap->mouseClick(mouse.x, mouse.y, 1);
+        if (item == -1)
+        {
+            if (mouse.button[0]) cellmap->mouseClick(mouse.x, mouse.y, 0);
+                else if (mouse.button[1]) cellmap->mouseClick(mouse.x, mouse.y, 1);
+        }
 
         speed_cnt -= speed_dec;
         if (speed_cnt <= 0)

@@ -13,6 +13,7 @@
 #define CELL_MAP_WIDTH    512
 #define CELL_MAP_HEIGHT   512
 #define MAX_COLORS        8
+#define COLOR_WHEEL_SIZE  176
 
 #define LIVE              1
 #define DEAD              0
@@ -39,6 +40,8 @@ class CellMap : public CanvasObject
         void animateCells();
         void mouseClick(const int &x, const int &y, const int button);
         void setCellColor(uint8_t r, uint8_t g, uint8_t b);
+        void setColorWheelColor(int i);
+        void setAnimate() {animate ^= 1;}
         uint32_t getColor() {return colors[1];}
 
     private:
@@ -46,6 +49,7 @@ class CellMap : public CanvasObject
         void countCenterCells(const int &x,const int &y);
         void countEdgeCells(const int &x,const int &y);
         bool lookMouseInside(const int &x, const int &y);
+        void initColorWheel();
 
         Canvas  *canvas;
 
@@ -54,16 +58,23 @@ class CellMap : public CanvasObject
             uint8_t cell[2];
         }Cell;
 
+        typedef struct {
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+        }RGB_Col;
+
         Cell     cellmap[CELL_MAP_WIDTH][CELL_MAP_HEIGHT];
         uint32_t cellpic[CELL_MAP_WIDTH * CELL_MAP_HEIGHT];
         uint32_t a_colors[MAX_COLORS];
         uint32_t colors[2];
+        RGB_Col  color_wheel[COLOR_WHEEL_SIZE];
         int      add_xy[8][2];
         int      width;
         int      height;
         int      cur_gen, last_gen;
         int      cmx, cmy;
-        bool     animate;
+        uint8_t  animate;
 };
 
 #endif // CELLMAP_H

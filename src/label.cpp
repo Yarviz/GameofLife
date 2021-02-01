@@ -7,8 +7,6 @@ Label::Label(Canvas *canvas_, int _width, int _height)
     height = _height;
 
     text_area.resize(width * height, 0);
-
-    font.loadFonts();
 }
 
 Label::~Label()
@@ -21,7 +19,7 @@ void Label::setText(string _text, uint32_t color)
     text = _text;
 
     memset(text_area.data(), 0, sizeof(uint32_t) * text_area.size());
-    font.text(text, text_area.data(), 0, 0, width, height, color);
+    Fonts::text(text, text_area.data(), 0, 0, width, height, color);
 
     t_width = text.size() * 4;
 }
@@ -30,7 +28,7 @@ void Label::uploadText()
 {
     if (atlas_x == -1) return;
 
-    setAtlasPos(t_width, height);
+    setAtlasPos(atlas_x, atlas_y, t_width, height);
 
     canvas->updateTexture(text_area.data(), atlas_x, atlas_y, width, height);
 }

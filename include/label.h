@@ -27,7 +27,7 @@ class Label : public CanvasObject
 
     private:
         Canvas  *canvas;
-        Fonts    font;
+        //Fonts    font;
 
         vector<uint32_t> text_area;
         string   text;

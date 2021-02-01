@@ -15,6 +15,8 @@
 #include "cellmap.h"
 #include "label.h"
 #include "slide.h"
+#include "button.h"
+#include "fonts.h"
 
 using namespace std;
 
@@ -40,12 +42,19 @@ class Game
 
         shared_ptr<Canvas>  canvas;
         CellMap    *cellmap;
+
         Label      *labelSize;
         Label      *labelSpeed;
         Label      *labelColor;
         Slide      *slideSize;
         Slide      *slideSpeed;
         Slide      *slideColor;
+        Button     *buttonShadows;
+        Button     *buttonClear;
+        Button     *buttonRandom;
+        Button     *buttonStop;
+        Button     *buttonStep;
+
         Mouse       mouse;
         int         speed;
         int         width, height;

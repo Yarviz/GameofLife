@@ -31,9 +31,6 @@ class Canvas
         void removeChild(CanvasObject *object);
         void updateTexture(const uint32_t *source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh);
 
-        Pixmap  createPixmap(int width, int height);
-        GC*     getGC() {return &gc;}
-
         int getWidth() {return width;}
         int getHeight() {return height;}
         int getWindowWidth() {return w_width;}

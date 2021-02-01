@@ -79,28 +79,31 @@ void Fonts::initFonts()
     inited = true;
 }
 
-void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color)
+void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color, bool middle)
 {
     int xx, yy;
     int ch;
     uint16_t data;
 
-    uint32_t col[2] = {
+    if (middle)
+    {
+        x = x + width / 2 - (txt.size() * 4 / 2);
+        y = y + height / 2 - 3;
 
-        0xff000000,
-        color
-    };
+        if (x < 0 || y < 0) return;
+    }
 
     for (const char &c: txt)
     {
-        if (x + 3 > width || y + 5 > height) return;
+        if (x + 3 > width) return;
+
         data = font_data[font_num[(int)c]];
 
         for (yy = 0; yy < 5; yy++)
         {
             for (xx = 0; xx < 3; xx++)
             {
-                dest[(y + yy) * width + x + xx] = col[data & 0x0001];
+                data & 0x0001 ? dest[(y + yy) * width + x + xx] = color : 0;
                 data >>= 1;
             }
         }

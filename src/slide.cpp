@@ -26,13 +26,13 @@ void Slide::init()
     for(int xx = 0; xx < SLIDE_WIDTH; xx++)
     {
         image[xx] = 0xffdddddd;
-        image[(SLIDE_HEIGHT - 1) * SLIDE_WIDTH + xx] = 0xffdddddd;
+        image[(SLIDE_HEIGHT - 1) * SLIDE_WIDTH + xx] = 0xff666666;
     }
 
     for(int yy = 0; yy < SLIDE_HEIGHT; yy++)
     {
         image[yy * SLIDE_WIDTH] = 0xffdddddd;
-        image[yy * SLIDE_WIDTH + SLIDE_WIDTH - 1] = 0xffdddddd;
+        image[yy * SLIDE_WIDTH + SLIDE_WIDTH - 1] = 0xff666666;
     }
 
     inited = true;
@@ -44,10 +44,10 @@ void Slide::setXY(int _x, int _y, int _siz)
     y = _y;
     siz = _siz;
 
-    xf1 = -1.0 + (float)x / (float)canvas->getWidth() * 2;
-    xf2 = -1.0 + (float)(x + width * siz) / (float)canvas->getWidth() * 2;
-    yf1 = 1.0 - (float)y / (float)canvas->getHeight() * 2;
-    yf2 = 1.0 - (float)(y + height * siz) / (float)canvas->getHeight() * 2;
+    xf1 = GL_X(x);
+    xf2 = GL_X(x + width * siz);
+    yf1 = GL_Y(y);
+    yf2 = GL_Y(y + height * siz);
 }
 
 void Slide::setSlidePos(int _x, int _x2, int min_i, int max_i)
@@ -63,15 +63,15 @@ void Slide::uploadImage()
 {
     if (atlas_x == -1) return;
 
-    setAtlasPos(width, height);
+    setAtlasPos(atlas_x, atlas_y, width, height);
 
     canvas->updateTexture(image.data(), atlas_x, atlas_y, width, height);
 }
 
 bool Slide::lookMouseInside(const int &mx, const int &my)
 {
-    float mxf = -1.0 + (float)mx / (float)canvas->getWindowWidth() * 2;
-    float myf =  1.0 - (float)my / (float)canvas->getWindowHeight() * 2;
+    float mxf = GL_MX(mx);
+    float myf = GL_MY(my);
 
     if (mxf < xf1 || mxf > xf2 || myf > yf1 || myf < yf2) return false;
 
@@ -98,8 +98,8 @@ int Slide::mouseMove(const int &mx)
     (x < sx1) ? x = sx1 : 0;
     (x > sx2) ? x = sx2 : 0;
 
-    xf1 = -1.0 + (float)x / (float)canvas->getWidth() * 2;
-    xf2 = -1.0 + (float)(x + width * siz) / (float)canvas->getWidth() * 2;
+    xf1 = GL_X(x);
+    xf2 = GL_X(x + width * siz);
 
     return min_item + (int)((float)(x - sx1) * item_ex);
 }
