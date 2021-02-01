@@ -26,6 +26,7 @@ class Button : public CanvasObject
         void setXY(int _x, int _y, int _siz);
         void uploadImage();
         void setState(bool _state);
+        void setText(const string &txt);
         void setTextColor(uint32_t col);
         void mouseClick(const int &mx, const int &my);
         bool mouseRelease();

@@ -64,6 +64,14 @@ void Button::setTextColor(uint32_t col)
     text_col[1] |= (int)((float)(col & 0xff0000) * 0.7);
 }
 
+void Button::setText(const string &txt)
+{
+    text = txt;
+
+    init();
+    uploadImage();
+}
+
 void Button::setState(bool _state)
 {
     state = _state;

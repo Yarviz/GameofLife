@@ -35,13 +35,16 @@ class CellMap : public CanvasObject
         virtual ~CellMap();
 
         void draw();
+        void updateTexture();
         void setSize(int _width, int _height);
-        void initCellMap();
+        void randomCellMap(int rnd);
         void animateCells();
         void mouseClick(const int &x, const int &y, const int button);
         void setCellColor(uint8_t r, uint8_t g, uint8_t b);
-        void setColorWheelColor(int i);
-        void setAnimate() {animate ^= 1;}
+        void setColorWheelColor(int i, bool stopped);
+        void toggleAnimate();
+        bool getAnimate() {return animate;}
+        void clearCellMap(bool all);
         uint32_t getColor() {return colors[1];}
 
     private:
@@ -50,6 +53,7 @@ class CellMap : public CanvasObject
         void countEdgeCells(const int &x,const int &y);
         bool lookMouseInside(const int &x, const int &y);
         void initColorWheel();
+        void updateCellMapColors();
 
         Canvas  *canvas;
 
@@ -74,7 +78,8 @@ class CellMap : public CanvasObject
         int      height;
         int      cur_gen, last_gen;
         int      cmx, cmy;
-        uint8_t  animate;
+        bool     animate;
+        bool     update;
 };
 
 #endif // CELLMAP_H

@@ -34,7 +34,7 @@ void Game::init()
 
     cellmap = new CellMap(canvas.get());
     cellmap->setSize(cell_siz, cell_siz);
-    cellmap->initCellMap();
+    cellmap->randomCellMap(16);
 
     labelSize = new Label(canvas.get(), 80, 5);
     labelSize->setText("SIZE: 64 X 64", 0xff00ffff);
@@ -126,6 +126,8 @@ void Game::run()
 
     XEvent xevent;
     bool running = true;
+    bool stopped = false;
+
     float speed_cnt = 1.0;
     float speed_dec = (float)speed / 60.0;
     int item;
@@ -216,7 +218,7 @@ void Game::run()
                     item = slideColor->mouseMove(mouse.x);
                     if (item > -1)
                     {
-                        cellmap->setColorWheelColor(item);
+                        cellmap->setColorWheelColor(item, stopped);
 
                         labelColor->setText("COLOR: " + toHex(cellmap->getColor() & 0xffffff, 6), cellmap->getColor());
                         labelColor->uploadText();
@@ -245,11 +247,32 @@ void Game::run()
                     slideSpeed->mouseRelease();
                     slideColor->mouseRelease();
 
-                    if (buttonShadows->mouseRelease()) cellmap->setAnimate();
-                    buttonClear->mouseRelease();
-                    buttonRandom->mouseRelease();
-                    buttonStop->mouseRelease();
-                    buttonStep->mouseRelease();
+
+                    if (buttonClear->mouseRelease()) cellmap->clearCellMap(true);
+                    if (buttonRandom->mouseRelease()) cellmap->randomCellMap(16);
+                    if (buttonStep->mouseRelease()) cellmap->animateCells();
+
+                    if (buttonShadows->mouseRelease())
+                    {
+                        cellmap->toggleAnimate();
+                        if (cellmap->getAnimate()) buttonShadows->setText("SHADOWS: ON");
+                            else buttonShadows->setText("SHADOWS: OFF");
+                    }
+
+                    if (buttonStop->mouseRelease())
+                    {
+                        stopped ^= 1;
+                        if (stopped)
+                        {
+                            buttonStep->setState(true);
+                            buttonStop->setText("RUN");
+                        }
+                        else
+                        {
+                            buttonStep->setState(false);
+                            buttonStop->setText("STOP");
+                        }
+                    }
                     break;
             }
         }
@@ -261,12 +284,14 @@ void Game::run()
         }
 
         speed_cnt -= speed_dec;
-        if (speed_cnt <= 0)
+        if (speed_cnt <= 0 && !stopped)
         {
             cellmap->animateCells();
             speed_cnt = 1.0;
             speed_dec = (float)speed / 60.0;
         }
+
+        cellmap->updateTexture();
 
         this_thread::sleep_until(frame_timer + fps_tick);
 
