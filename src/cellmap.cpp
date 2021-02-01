@@ -198,7 +198,7 @@ void CellMap::mouseClick(const int &x, const int &y, const int button)
     {
         cellmap[cmx][cmy].cell[last_gen] = DEAD;
         cellmap[cmx][cmy].anim = MAX_COLORS - 2;
-        cellpic[cmy * width + cmx] = a_colors[MAX_COLORS - 2];
+        animate ? cellpic[cmy * width + cmx] = a_colors[MAX_COLORS - 2] : cellpic[cmy * width + cmx] = colors[0];
     }
 
     update = true;
