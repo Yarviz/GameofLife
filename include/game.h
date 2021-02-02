@@ -30,7 +30,7 @@ class Game
 
     private:
         void   init();
-        string toHex(uint32_t value, int len);
+        string toHex(const uint32_t &value, int len);
 
         typedef struct {                // Mouse info
             bool button[2];

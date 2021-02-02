@@ -135,7 +135,7 @@ void Button::mouseClick(const int &mx, const int &my)
     grab = true;
 }
 
-bool Button::mouseRelease()
+bool Button::mouseRelease(const int &mx, const int &my)
 {
     if (!state) return false;
 
@@ -143,7 +143,7 @@ bool Button::mouseRelease()
 
     setAtlasPos(atlas_x, atlas_y, width, height);
 
-    if (grab)
+    if (grab && lookMouseInside(mx, my))
     {
         grab = false;   // If button is currently grabbed, return true (button clicked)
         return true;

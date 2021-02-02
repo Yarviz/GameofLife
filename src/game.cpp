@@ -136,14 +136,18 @@ void Game::init()
     memset(&mouse, 0, sizeof(mouse));
 }
 
-// Function for changing integer to hexadecimal string
+// Function for changing color value to hexadecimal string
 
-string Game::toHex(uint32_t value, int len)
+string Game::toHex(const uint32_t &value, int len)
 {
+    // Invert color order bits from BGR to RGB
+
+    uint32_t num = (value & 0xff0000) >> 16 | (value & 0x0000ff) << 16 | (value & 0x00ff00);
+
     static const char* digit = "0123456789ABCDEF";
     string str(len, '0');
     for (size_t i = 0, j = (len - 1) * 4 ; i < len; ++i, j -= 4)
-                str[i] = digit[(value >> j) & 0x0f];
+                str[i] = digit[(num >> j) & 0x0f];
     return str;
 }
 
@@ -265,18 +269,18 @@ void Game::run()
                     // clear cell map, set random cells, step next generation, toggle shadows on/off
                     // or pause/run cell animation depending on the button pressed.
 
-                    if (buttonClear->mouseRelease()) cellmap->clearCellMap(true);
-                    if (buttonRandom->mouseRelease()) cellmap->randomCellMap(16);
-                    if (buttonStep->mouseRelease()) cellmap->animateCells();
+                    if (buttonClear->mouseRelease(mouse.x, mouse.y)) cellmap->clearCellMap(true);
+                    if (buttonRandom->mouseRelease(mouse.x, mouse.y)) cellmap->randomCellMap(16);
+                    if (buttonStep->mouseRelease(mouse.x, mouse.y)) cellmap->animateCells();
 
-                    if (buttonShadows->mouseRelease())
+                    if (buttonShadows->mouseRelease(mouse.x, mouse.y))
                     {
                         cellmap->toggleAnimate();
                         if (cellmap->getAnimate()) buttonShadows->setText("SHADOWS: ON");
                             else buttonShadows->setText("SHADOWS: OFF");
                     }
 
-                    if (buttonStop->mouseRelease())
+                    if (buttonStop->mouseRelease(mouse.x, mouse.y))
                     {
                         stopped ^= 1;
                         if (stopped)

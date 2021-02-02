@@ -25,15 +25,15 @@ class Button : public CanvasObject
         Button(Canvas *canvas_, int _width, int _height, string _text, uint32_t _text_col);
         virtual ~Button();
 
-        void setXY(int _x, int _y, int _siz);           // Set button position and size factor
-        void uploadImage();                             // Upload bitmap to texture atlas
-        void setState(bool _state);                     // Set button active/inactive
-        void setText(const string &txt);                // Set button text
-        void setTextColor(uint32_t col);                // Set text color
-        void mouseClick(const int &mx, const int &my);  // Mouse click callback
-        bool mouseRelease();                            // Mouse release callback
-        int  mouseMove(const int &mx, const int &my);   // Mouse move callback
-        void draw();                                    // Drawing on canvas
+        void setXY(int _x, int _y, int _siz);            // Set button position and size factor
+        void uploadImage();                              // Upload bitmap to texture atlas
+        void setState(bool _state);                      // Set button active/inactive
+        void setText(const string &txt);                 // Set button text
+        void setTextColor(uint32_t col);                 // Set text color
+        void mouseClick(const int &mx, const int &my);   // Mouse click callback
+        bool mouseRelease(const int &mx, const int &my); // Mouse release callback
+        int  mouseMove(const int &mx, const int &my);    // Mouse move callback
+        void draw();                                     // Drawing on canvas
 
     private:
         void init();                                            // Initialize button bitmap (redraw after changing text/text color)

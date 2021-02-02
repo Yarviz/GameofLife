@@ -24,7 +24,7 @@ void Label::setText(string _text, uint32_t color)
     Fonts::text(text, text_area.data(), 0, 0, width, height, color);
 
     t_width = text.size() * 4;  // Save text width
-    
+
     setXY(x, y, text_size);   // Update text rectangle
 }
 
@@ -48,7 +48,7 @@ void Label::setXY(int _x, int _y, int siz)
     xf1 = GL_X(x);
     xf2 = GL_X(x + t_width * siz);
     yf1 = GL_Y(y);
-    yf2 = GL_Y(y + width * siz);
+    yf2 = GL_Y(y + height * siz);
 }
 
 void Label::draw()
