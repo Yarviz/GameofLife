@@ -5,7 +5,7 @@ Canvas::Canvas(int _width, int _height)
     width = _width;
     height = _height;
 
-    display = XOpenDisplay(NULL);
+    display = XOpenDisplay(NULL);   // Open display from X-server
 
     if(display == NULL)
     {
@@ -13,8 +13,10 @@ Canvas::Canvas(int _width, int _height)
         exit(EXIT_FAILURE);
     }
 
-    root = DefaultRootWindow(display);
+    root = DefaultRootWindow(display);          // Set default root window and screen
 	int screenId = DefaultScreen(display);
+
+	// Choose visual with OpenGL context attributes
 
     GLint vi_attributes[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
     vi_info = glXChooseVisual(display, 0, vi_attributes);
@@ -25,12 +27,16 @@ Canvas::Canvas(int _width, int _height)
         exit(EXIT_FAILURE);
     }
 
+    // Set accepted events for window and create color map.
+
     win_attr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask |PointerMotionMask;
     win_attr.colormap   = XCreateColormap(display, root, vi_info->visual, AllocNone);
 
+    // Create window with attributes
+
     window = XCreateWindow(display, root, 0, 0, width, height, 0, vi_info->depth, InputOutput, vi_info->visual, CWEventMask  | CWColormap, &win_attr);
 
-    XMapWindow(display, window);
+    XMapWindow(display, window);    // Map window on display
     gc = XDefaultGC(display, 0);
 
     initOpenGL();
@@ -43,6 +49,8 @@ Canvas::~Canvas()
 
 void Canvas::initOpenGL()
 {
+    // Create OpenGL context from display
+
     glxc = glXCreateContext(display, vi_info, NULL, GL_TRUE);
 
     if (glxc == NULL)
@@ -51,8 +59,12 @@ void Canvas::initOpenGL()
         exit(EXIT_FAILURE);
     }
 
+    // Set current context active and set OpenGL viewport
+
     glXMakeCurrent(display, window, glxc);
     refreshContext();
+
+    // Disable depth test and alpha blending
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
@@ -62,6 +74,8 @@ void Canvas::initOpenGL()
 
 void Canvas::refreshContext()
 {
+    // Update window attributes and OpenGL viewport
+
     XWindowAttributes	w_attr;
     XGetWindowAttributes(display, window, &w_attr);
 
@@ -73,6 +87,8 @@ void Canvas::refreshContext()
 
 void Canvas::destroy()
 {
+    // Destroy window and its context
+
     glDeleteTextures(1, &texture_id);
     glXMakeCurrent(display, None, NULL);
     glXDestroyContext(display, glxc);
@@ -82,11 +98,15 @@ void Canvas::destroy()
 
 void Canvas::setTitle(const char *title)
 {
+    // Set window title
+
     XStoreName(display, window, title);
 }
 
 void Canvas::addChild(CanvasObject *object, int width, int height)
 {
+    // Add child object pointer to canvas and reserve space from texture atlas
+
     objects.push_back(object);
 
     if (atlas_x + width > TEXTURE_ATLAS_WIDTH)
@@ -107,6 +127,8 @@ void Canvas::addChild(CanvasObject *object, int width, int height)
 
 void Canvas::removeChild(CanvasObject *object)
 {
+    // Remove child object from object pointer vector
+
     vector<CanvasObject*>::iterator it;
 
     for(it = objects.begin(); it != objects.end(); it++)
@@ -121,6 +143,8 @@ void Canvas::removeChild(CanvasObject *object)
 
 void Canvas::createTextureAtlas()
 {
+    // Create texture atlas in video memory
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &texture_id);
     glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -136,6 +160,8 @@ void Canvas::createTextureAtlas()
 
 void Canvas::updateTexture(const uint32_t *source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh)
 {
+    // Update texture atlas from source data on specific position and dimensions
+
     glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, (void *)source);
 }
 
@@ -146,11 +172,17 @@ void Canvas::repaint()
 
 void Canvas::draw()
 {
+    // Clear color buffer
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // Draw child objects
+
     if (!objects.empty())
     {
+        // First draw lines for slides and rectangle for cell map
+
         glBindTexture(GL_TEXTURE_2D, 0);
         glColor3f(0.0, 1.0, 1.0);
 
@@ -179,6 +211,8 @@ void Canvas::draw()
 
         glEnd();
 
+        // Then draw each children image from texture atlas
+
         glBindTexture(GL_TEXTURE_2D, texture_id);
         glBegin(GL_QUADS);
 
@@ -189,6 +223,8 @@ void Canvas::draw()
 
         glEnd();
     }
+
+    // Swap buffers with display
 
     glXSwapBuffers(display, window);
     XFlush(display);

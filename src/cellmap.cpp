@@ -4,7 +4,9 @@ CellMap::CellMap(Canvas *canvas_)
 {
     canvas = canvas_;
 
-    memset(&cellmap, 0, sizeof(cellmap));
+    memset(&cellmap, 0, sizeof(cellmap));   // Initialize cell map to all zeros
+
+    // Set x/y adders to calculate cell neighbor positions
 
     int _add_xy[8][2] = {
         {-1, -1}, { 0, -1}, { 1, -1}, {-1,  0},
@@ -32,10 +34,16 @@ CellMap::~CellMap()
 
 void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
 {
+    // Set cell main and shadow colors. Color is stored in 32-bit unsigned integer
+    // ABGR-order (8-bit each channel) because when updating texture data is readed
+    // from LSB first (0x000000ff).
+
     a_colors[0] = 0xff000000;
     a_colors[MAX_COLORS - 1] = 0xff000000 | (b << 16) | (g << 8) | r;
 
     float xp = 0.3;
+
+    // Set shadow colors. Every color channel is little bit dimmer than on previous color.
 
     for (int i = MAX_COLORS - 2; i > 0; i--)
     {
@@ -47,6 +55,8 @@ void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
         xp -= 0.3 / (MAX_COLORS);
     }
 
+    // Set main colors (used when shadows are off)
+
     colors[0] = a_colors[0];
     colors[1] = a_colors[MAX_COLORS - 1];
 
@@ -55,6 +65,8 @@ void CellMap::setCellColor(uint8_t r, uint8_t g, uint8_t b)
 
 void CellMap::setColorWheelColor(int i, bool stopped)
 {
+    // Get cell color from color wheel array
+
     if (i > COLOR_WHEEL_SIZE) return;
 
     setCellColor(color_wheel[i].r, color_wheel[i].g, color_wheel[i].b);
@@ -63,6 +75,11 @@ void CellMap::setColorWheelColor(int i, bool stopped)
 
 void CellMap::initColorWheel()
 {
+    // Initialize color wheel to run trough all colors. There are seven steps:
+    // red -> yellow -> green -> blue-green -> blue -> purple -> red-purple -> white
+
+    // Set each step calculated from color wheel size
+
     float exp = (256.0 * 7 + 5) / (float)COLOR_WHEEL_SIZE;
 
     float rgb_add[7][3] = {{ 0, exp,   0}, {-exp,  0,  0}, {  0,  0, exp},
@@ -105,6 +122,8 @@ void CellMap::initColorWheel()
 
 void CellMap::setSize(int _width, int _height)
 {
+    // Set cell map current size
+
     width = _width;
     height = _height;
 
@@ -113,6 +132,8 @@ void CellMap::setSize(int _width, int _height)
 
 void CellMap::toggleAnimate()
 {
+    // Set cell shadows on/off
+
     animate ^= 1;
 
     updateCellMapColors();
@@ -120,11 +141,14 @@ void CellMap::toggleAnimate()
 
 void CellMap::updateCellMapColors()
 {
+    // Update current cell colors on cell map image
+
     for(int y = 0; y < width; y++)
     {
         for (int x = 0; x < height; x++)
         {
-            animate ? cellpic[y * width + x] = a_colors[cellmap[x][y].anim] : cellpic[y * width + x] = colors[cellmap[x][y].cell[last_gen]];
+            animate ? cellpic[y * width + x] = a_colors[cellmap[x][y].anim] :
+                cellpic[y * width + x] = colors[cellmap[x][y].cell[last_gen]];
         }
     }
 
@@ -133,6 +157,8 @@ void CellMap::updateCellMapColors()
 
 void CellMap::clearCellMap(bool all)
 {
+    // Clear cell map. If all = true set all cells dead, else only clear shadows
+
     for(int y = 0; y < CELL_MAP_HEIGHT; y++)
     {
         for (int x = 0; x < CELL_MAP_WIDTH; x++)
@@ -155,6 +181,8 @@ void CellMap::clearCellMap(bool all)
 
 void CellMap::randomCellMap(int rnd)
 {
+    // Set random cells to live based on rnd-value
+
     for(int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -171,30 +199,36 @@ void CellMap::randomCellMap(int rnd)
     update = true;
 }
 
-bool CellMap::lookMouseInside(const int &x, const int &y)
+bool CellMap::lookMouseInside(const int &mx, const int &my)
 {
-    float xf = GL_MX(x);
-    float yf = GL_MY(y);
+    // Change mouse coordinates to OpenGL coordinates
 
-    if (xf < X_START || xf > X_END || yf > Y_START || yf < Y_END) return false;
+    float mxf = GL_MX(mx);
+    float myf = GL_MY(my);
 
-    cmx = (xf + -X_START) / (X_SIZE / width);
-    cmy = -(yf - Y_START) / (Y_SIZE / height);
+    // If outside cell map bounds, return false
+
+    if (mxf < X_START || mxf > X_END || myf > Y_START || myf < Y_END) return false;
+
+    // Transfer OpenGL coordinates to match selected cell
+
+    cmx = (mxf + -X_START) / (X_SIZE / width);
+    cmy = -(myf - Y_START) / (Y_SIZE / height);
 
     return true;
 }
 
-void CellMap::mouseClick(const int &x, const int &y, const int button)
+void CellMap::mouseClick(const int &mx, const int &my, const int button)
 {
-    if (!lookMouseInside(x, y)) return;
+    if (!lookMouseInside(mx, my)) return;
 
-    if (button == 0)
+    if (button == 0)    // Left mouse button set cell to live
     {
         cellmap[cmx][cmy].cell[last_gen] = LIVE;
         cellmap[cmx][cmy].anim = MAX_COLORS - 1;
         cellpic[cmy * width + cmx] = colors[1];
     }
-    else if (button == 1)
+    else if (button == 1)   // Right mouse button set cell to dead
     {
         cellmap[cmx][cmy].cell[last_gen] = DEAD;
         cellmap[cmx][cmy].anim = MAX_COLORS - 2;
@@ -206,6 +240,9 @@ void CellMap::mouseClick(const int &x, const int &y, const int button)
 
 void CellMap::checkCell(const int &x, const int &y, const int &n_cells)
 {
+    // Set current cell state to LIVE or DEAD based on Conway's Game of Life - rules.
+    // n_cells is number of live neighbors from previous generation.
+
     if(cellmap[x][y].cell[last_gen] == LIVE)
     {
         if (n_cells < 2 || n_cells > 3) cellmap[x][y].cell[cur_gen] = DEAD;
@@ -221,13 +258,22 @@ void CellMap::checkCell(const int &x, const int &y, const int &n_cells)
 
 void CellMap::countCenterCells(const int &x, const int &y)
 {
+    // Count cells living neighbors from center of map.
+    // No need to check every time if position is outside bounds.
+
     int cells = 0;
     for(int i = 0; i < 8; i++)
         cells += cellmap[x + add_xy[i][0]][y + add_xy[i][1]].cell[last_gen];
 
-    checkCell(x, y, cells);
+    checkCell(x, y, cells); // Set current cell LIVE or DEAD based on the rules
+
+    // If cell is dead and cell shadow value > 0 decrease it
 
     if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
+
+    // If animations on, set cell color to respond shadow color, else
+    // set color to respond cells current state (LIVE or DEAD)
+
     if (animate)
     {
         cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
@@ -237,6 +283,10 @@ void CellMap::countCenterCells(const int &x, const int &y)
 
 void CellMap::countEdgeCells(const int &x, const int &y)
 {
+    // Count cells living neighbors from edges of map. Every time need
+    // to check if position is outside bounds. If so, then wrap position
+    // around to other edge of cell map.
+
     int cells = 0;
     int xx, yy;
 
@@ -251,9 +301,15 @@ void CellMap::countEdgeCells(const int &x, const int &y)
         cells += cellmap[xx][yy].cell[last_gen];
     }
 
-    checkCell(x, y, cells);
+    checkCell(x, y, cells); // Set current cell LIVE or DEAD based on the rules
+
+    // If cell is dead and cell shadow value > 0 decrease it
 
     if (cellmap[x][y].cell[cur_gen] == DEAD) (cellmap[x][y].anim) ? (--cellmap[x][y].anim) : 0;
+
+    // If animations on, set cell color to respond shadow color, else
+    // set color to respond cells current state (LIVE or DEAD)
+
     if (animate)
     {
         cellpic[y * width + x] = a_colors[cellmap[x][y].anim];
@@ -266,8 +322,12 @@ void CellMap::animateCells()
     int x, y, xx, yy, i;
     int cells;
 
+    // First animate cells from center
+
     for(y = 1; y < height - 1; y++)
         for(x = 1; x < width - 1; x++) countCenterCells(x, y);
+
+    // Then edge cells
 
     for (x = 0; x < width; x++)
     {
@@ -281,6 +341,8 @@ void CellMap::animateCells()
         countEdgeCells(width - 1, y);
     }
 
+    // Swap generations
+
     cur_gen ^= 1;
     last_gen ^= 1;
 
@@ -289,7 +351,9 @@ void CellMap::animateCells()
 
 void CellMap::updateTexture()
 {
-    if (!update) return;
+    if (!update) return;    // Return if no need to update texture atlas
+
+    // Update texture atlas from current bounds and reset update flag.
 
     canvas->updateTexture(&cellpic[0], 0, 0, width, height);
     update = false;
@@ -297,8 +361,12 @@ void CellMap::updateTexture()
 
 void CellMap::draw()
 {
+    // Get current cell map size on texture atlas
+
     float x_size =  (float)width / (float)TEXTURE_ATLAS_WIDTH;
     float y_size =  (float)height / (float)TEXTURE_ATLAS_HEIGHT;
+
+    // Draw cell map image on canvas
 
     glTexCoord2f(atlas_x, atlas_y);
     glVertex2f(X_START, Y_START);
