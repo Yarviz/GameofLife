@@ -37,7 +37,6 @@ Canvas::Canvas(int _width, int _height)
     window = XCreateWindow(display, root, 0, 0, width, height, 0, vi_info->depth, InputOutput, vi_info->visual, CWEventMask  | CWColormap, &win_attr);
 
     XMapWindow(display, window);    // Map window on display
-    gc = XDefaultGC(display, 0);
 
     initOpenGL();
 }
@@ -163,11 +162,6 @@ void Canvas::updateTexture(const uint32_t *source, unsigned int dx, unsigned int
     // Update texture atlas from source data on specific position and dimensions
 
     glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, (void *)source);
-}
-
-void Canvas::repaint()
-{
-    XMapWindow(display, window);
 }
 
 void Canvas::draw()

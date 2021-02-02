@@ -28,7 +28,7 @@ Game::~Game()
 void Game::init()
 {
     canvas.reset(new Canvas(width, height));
-    canvas->setTitle("Conways Game of Life");
+    canvas->setTitle("Conway's Game of Life");
 
     // Set cell map size [cell_siz * cell_siz]
 

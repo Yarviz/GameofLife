@@ -28,7 +28,6 @@ class Canvas
         void destroy();                         // Destroy window
         void refreshContext();                  // Refresh window and OpenGL context
         void draw();                            // Draw window and it's objects
-        void repaint();
         void addChild(CanvasObject *object, int width, int height);     // Add object in window for drawing
         void removeChild(CanvasObject *object);                         // Remove object
         void updateTexture(const uint32_t *source, unsigned int dx, unsigned int dy, unsigned int dw, unsigned int dh); // Update GPU texture atlas
@@ -52,7 +51,6 @@ class Canvas
         XVisualInfo            *vi_info;            // X11 visual info for canvas window
         XSetWindowAttributes    win_attr;           // window attributes
         GLXContext              glxc;               // OpenGL context for X11 window
-        GC			            gc;                 // Graphics Context for display
 
         GLuint                  texture_id;         // GPU texture ID
         int                     width, height;      // Window native resolution
