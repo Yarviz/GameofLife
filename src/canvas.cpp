@@ -55,7 +55,7 @@ void Canvas::initOpenGL()
     refreshContext();
 
     glDisable(GL_DEPTH_TEST);
-    //glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
 
     createTextureAtlas();
 }

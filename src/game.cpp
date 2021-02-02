@@ -5,7 +5,7 @@ Game::Game(int _width, int _height)
     width = _width;
     height = _height;
 
-    Fonts::loadFonts();
+    Fonts::loadFonts();     // Init fonts
     init();
 }
 
@@ -30,11 +30,17 @@ void Game::init()
     canvas.reset(new Canvas(width, height));
     canvas->setTitle("Conways Game of Life");
 
+    // Set cell map size [cell_siz * cell_siz]
+
     cell_siz = 64;
+
+    // Initialize cell map and set random cells to live
 
     cellmap = new CellMap(canvas.get());
     cellmap->setSize(cell_siz, cell_siz);
     cellmap->randomCellMap(16);
+
+    // Initialize labels : set text, text color, position, image size multiply and required bitmap size
 
     labelSize = new Label(canvas.get(), 80, 5);
     labelSize->setText("SIZE: 64 X 64", 0xff00ffff);
@@ -48,14 +54,21 @@ void Game::init()
     labelColor->setText("COLOR: FFFFFF", cellmap->getColor());
     labelColor->setXY(580, 60, 2);
 
+    // Add labels to canvas and initialize required space from texture atlas
+
     canvas->addChild(cellmap, CELL_MAP_WIDTH, CELL_MAP_HEIGHT);
     canvas->addChild(labelSize, 80, 5);
     canvas->addChild(labelSpeed, 80, 5);
     canvas->addChild(labelColor, 80, 5);
 
+    // Upload label bitmaps on texture atlas
+
     labelSize->uploadText();
     labelSpeed->uploadText();
     labelColor->uploadText();
+
+    // Initialize slides : set position, sliding position range(x1 - x2) and
+    // counted value range (value min - value max)
 
     slideSize = new Slide(canvas.get());
     slideSize->setXY(56, 32, 2);
@@ -69,13 +82,19 @@ void Game::init()
     slideColor->setXY(740, 32, 2);
     slideColor->setSlidePos(564, 740, 0, 175);
 
+    // Add slides to canvas and initialize required space from texture atlas
+
     canvas->addChild(slideSize, SLIDE_WIDTH, SLIDE_HEIGHT);
     canvas->addChild(slideSpeed, SLIDE_WIDTH, SLIDE_HEIGHT);
     canvas->addChild(slideColor, SLIDE_WIDTH, SLIDE_HEIGHT);
 
+    // Upload slide bitmaps on texture atlas
+
     slideSize->uploadImage();
     slideSpeed->uploadImage();
     slideColor->uploadImage();
+
+    // Initialize buttons : set button size, text, text color, position and image size multiply
 
     buttonShadows= new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "SHADOWS: ON", 0xffffff);
     buttonShadows->setXY(36, 90, 2);
@@ -92,11 +111,16 @@ void Game::init()
     buttonStep = new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "STEP", 0xffffff);
     buttonStep->setXY(634, 90, 2);
 
+    // Add buttons to canvas and initialize required space from texture atlas. Buttons need
+    // double height from atlas (normal and pressed button images)
+
     canvas->addChild(buttonShadows, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonClear, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonRandom, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonStop, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonStep, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
+
+    // Upload button bitmaps on texture atlas
 
     buttonShadows->uploadImage();
     buttonClear->uploadImage();
@@ -104,11 +128,15 @@ void Game::init()
     buttonStop->uploadImage();
     buttonStep->uploadImage();
 
+    // Set Step button inactive
+
     buttonStep->setState(false);
 
-    speed = 60;
+    speed = 60; // Cell animation speed 60 FPS
     memset(&mouse, 0, sizeof(mouse));
 }
+
+// Function for changing integer to hexadecimal string
 
 string Game::toHex(uint32_t value, int len)
 {
@@ -121,36 +149,48 @@ string Game::toHex(uint32_t value, int len)
 
 void Game::run()
 {
+    // Set display window to accept closing event
+
     Atom wmDeleteMessage = XInternAtom(canvas->getDisplay(), "WM_DELETE_WINDOW", False);
     XSetWMProtocols(canvas->getDisplay(), *canvas->getWindow(), &wmDeleteMessage, 1);
 
     XEvent xevent;
-    bool running = true;
-    bool stopped = false;
+    bool running = true;        // program running
+    bool stopped = false;       // cell animation stopped
 
     float speed_cnt = 1.0;
     float speed_dec = (float)speed / 60.0;
-    int item;
+    int item;                   // variable to store values from slides
+
+    // Masks for accepted events
 
     long mask = ExposureMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
+
+    // Initialize frame timer
 
     chrono::duration<long, ratio<1,60>> fps_tick(1);
     auto frame_timer = chrono::high_resolution_clock::now();
 
+    // Game main loop
+
     while(running)
     {
+        // Restart frame timer
+
         frame_timer = chrono::high_resolution_clock::now();
         item = -1;
+
+        // Check if window have events to handle
 
         while (XCheckWindowEvent(canvas->getDisplay(), *canvas->getWindow(), mask, &xevent))
         {
             switch(xevent.type)
             {
                 case Expose:
-                    canvas->refreshContext();
+                    canvas->refreshContext();   // Update window context dimensions
                     break;
 
-                case KeyPress:
+                case KeyPress:      // Escape key quits program
                     if (XLookupKeysym(&xevent.xkey, 0) == XK_Escape) running = false;
                     break;
 
@@ -158,11 +198,15 @@ void Game::run()
                     mouse.x = xevent.xmotion.x;
                     mouse.y = xevent.xmotion.y;
 
-                    buttonShadows->mouseMove(mouse.x, mouse.y);
+                    buttonShadows->mouseMove(mouse.x, mouse.y);     // Send mouse position to buttons
                     buttonClear->mouseMove(mouse.x, mouse.y);
                     buttonRandom->mouseMove(mouse.x, mouse.y);
                     buttonStop->mouseMove(mouse.x, mouse.y);
                     buttonStep->mouseMove(mouse.x, mouse.y);
+
+                    // Get item value from sliders (value -1 = slide not grabbed). If value > -1 set
+                    // cell map dimensions, animation speed and cell color relative to returned item value
+                    // and change label texts.
 
                     item = slideSize->mouseMove(mouse.x);
                     if (item > -1)
@@ -199,7 +243,7 @@ void Game::run()
                 case ButtonPress:
                     xevent.xbutton.button == 1 ? mouse.button[0] = 1 : mouse.button[1] = 1;
 
-                    slideSize->mouseClick(mouse.x, mouse.y);
+                    slideSize->mouseClick(mouse.x, mouse.y);        // Call slides and buttons mouseClick-functions
                     slideSpeed->mouseClick(mouse.x, mouse.y);
                     slideColor->mouseClick(mouse.x, mouse.y);
 
@@ -213,10 +257,13 @@ void Game::run()
                 case ButtonRelease:
                     xevent.xbutton.button == 1 ? mouse.button[0] = 0 : mouse.button[1] = 0;
 
-                    slideSize->mouseRelease();
+                    slideSize->mouseRelease();                      // Call slides mouseRelease-functions
                     slideSpeed->mouseRelease();
                     slideColor->mouseRelease();
 
+                    // Call buttons mouseRelease-functions. If button is currently grabbed
+                    // clear cell map, set random cells, step next generation, toggle shadows on/off
+                    // or pause/run cell animation depending on the button pressed.
 
                     if (buttonClear->mouseRelease()) cellmap->clearCellMap(true);
                     if (buttonRandom->mouseRelease()) cellmap->randomCellMap(16);
@@ -247,14 +294,20 @@ void Game::run()
             }
         }
 
+        // Check clients window delete message to quit program
+
         if (XCheckTypedWindowEvent(canvas->getDisplay(), *canvas->getWindow(), ClientMessage, &xevent))
             if (xevent.xclient.data.l[0] == wmDeleteMessage) running = false;
+
+        // Set cells LIVE/DEAD by clicking mouse buttons
 
         if (item == -1)
         {
             if (mouse.button[0]) cellmap->mouseClick(mouse.x, mouse.y, 0);
                 else if (mouse.button[1]) cellmap->mouseClick(mouse.x, mouse.y, 1);
         }
+
+        // Animate cells by current speed
 
         speed_cnt -= speed_dec;
         if (speed_cnt <= 0 && !stopped)
@@ -264,12 +317,12 @@ void Game::run()
             speed_dec = (float)speed / 60.0;
         }
 
-        cellmap->updateTexture();
+        cellmap->updateTexture();   // Update texture map
 
-        this_thread::sleep_until(frame_timer + fps_tick);
+        this_thread::sleep_until(frame_timer + fps_tick);   // Program sleeps to maintain stable 60 FPS
 
-        canvas->draw();
+        canvas->draw();             // Draw canvas on window
     }
 
-    canvas->destroy();
+    canvas->destroy();              // Destroy window and OpenGL context
 }

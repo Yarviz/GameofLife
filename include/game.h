@@ -32,7 +32,7 @@ class Game
         void   init();
         string toHex(uint32_t value, int len);
 
-        typedef struct {
+        typedef struct {                // Mouse info
             bool button[2];
             bool hold;
             bool inside;
@@ -40,25 +40,25 @@ class Game
             int  y;
         }Mouse;
 
-        shared_ptr<Canvas>  canvas;
-        CellMap    *cellmap;
+        shared_ptr<Canvas>  canvas;     // Canvas object for drawing (OpenGL 1.4 is used)
+        CellMap    *cellmap;            // Object for cell map
 
-        Label      *labelSize;
+        Label      *labelSize;          // Label objects for the canvas
         Label      *labelSpeed;
         Label      *labelColor;
-        Slide      *slideSize;
+        Slide      *slideSize;          // Slide objects for the canvas
         Slide      *slideSpeed;
         Slide      *slideColor;
-        Button     *buttonShadows;
+        Button     *buttonShadows;      // Buttons for the canvas
         Button     *buttonClear;
         Button     *buttonRandom;
         Button     *buttonStop;
         Button     *buttonStep;
 
-        Mouse       mouse;
-        int         speed;
-        int         width, height;
-        int         cell_siz;
+        Mouse       mouse;              // Mouse info
+        int         speed;              // Cell animation speed (Frames per second)
+        int         width, height;      // Game window size
+        int         cell_siz;           // Cell map dimensions [cell_size * cell_size]
 };
 
 #endif // GAME_H
