@@ -1,5 +1,7 @@
 #include "fonts.h"
 
+// Initialize static variables
+
 bool        Fonts::inited = false;
 uint16_t    Fonts::font_data[FONTS];
 int         Fonts::font_num[128];
@@ -17,12 +19,14 @@ Fonts::~Fonts()
 
 bool Fonts::loadFonts()
 {
-    if (Fonts::inited == true) return true;
+    if (Fonts::inited == true) return true; // Return if fonts already initialized
 
     std::stringstream font_code;
     ifstream font_file;
 
     font_file.exceptions (ifstream::failbit | ifstream::badbit);
+
+    // Read fonts from file and catch possible errors
 
     try
     {
@@ -40,6 +44,10 @@ bool Fonts::loadFonts()
     int counter = 0;
     int bits = 0;
 
+    // Turn readed data to individual fonts. Each font is stored in
+    // 16-bit unsigned short where 1-bit means pixel to draw. Each
+    // font takes 3*5 bits = 15 bits.
+
     for (char& c : font_code.str())
     {
         if (c == '0' || c == '1')
@@ -55,14 +63,14 @@ bool Fonts::loadFonts()
                 bits = 0;
                 if (++counter == FONTS)
                 {
-                    initFonts();
+                    initFonts();    // When every defined font is readed, initialize fonts and return
                     return true;
                 }
             }
         }
     }
 
-    return false;
+    return false;   // Return false if fonts are missing
 }
 
 void Fonts::initFonts()
@@ -70,6 +78,8 @@ void Fonts::initFonts()
     string fonts = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:";
 
     memset(&font_num, 0, sizeof(font_num));
+
+    // Initialize font table with ASCII characters
 
     for (int i = 0; i < fonts.size(); i++)
     {
@@ -85,24 +95,29 @@ void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int
     int ch;
     uint16_t data;
 
+    // Count text positions if text is setted to middle of bitmap
+
     if (middle)
     {
         x = x + width / 2 - (txt.size() * 4 / 2);
         y = y + height / 2 - 3;
 
-        if (x < 0 || y < 0) return;
+        if (x < 0 || y < 0) return; // Return if outside bounds
     }
 
     for (const char &c: txt)
     {
-        if (x + 3 > width) return;
+        if (x + 3 > width) return;  // Return if outside bounds
 
-        data = font_data[font_num[(int)c]];
+        data = font_data[font_num[(int)c]]; // Get font data from font table based on current characters value
 
         for (yy = 0; yy < 5; yy++)
         {
             for (xx = 0; xx < 3; xx++)
             {
+                // Get current font first bit and set pixel if bit = 1.
+                // Then shift data bits to right to get next bit.
+
                 data & 0x0001 ? dest[(y + yy) * width + x + xx] = color : 0;
                 data >>= 1;
             }

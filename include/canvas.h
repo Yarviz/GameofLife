@@ -17,6 +17,7 @@
 using namespace std;
 class CanvasObject;
 
+// Class for X11 window with drawable OpenGL context
 class Canvas
 {
     public:

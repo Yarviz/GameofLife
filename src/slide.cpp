@@ -1,5 +1,7 @@
 #include "slide.h"
 
+// Initialize static bitmap vector
+
 vector<uint32_t>  Slide::image;
 bool     Slide::inited = false;
 
@@ -11,7 +13,7 @@ Slide::Slide(Canvas *canvas_)
     height = SLIDE_HEIGHT;
     grab = false;
 
-    if (!inited) init();
+    if (!inited) init(); // Check if bitmap already initialized
 }
 
 Slide::~Slide()
@@ -21,6 +23,9 @@ Slide::~Slide()
 
 void Slide::init()
 {
+    // Resize image vector and set it to color FFAAAAAA (ABGR).
+    // Then paint image edges on bitmap.
+
     image.resize(SLIDE_WIDTH * SLIDE_HEIGHT, 0xffaaaaaa);
 
     for(int xx = 0; xx < SLIDE_WIDTH; xx++)
@@ -44,6 +49,8 @@ void Slide::setXY(int _x, int _y, int _siz)
     y = _y;
     siz = _siz;
 
+    // Set slide OpenGL position (-1.0 to 1.0) on canvas
+
     xf1 = GL_X(x);
     xf2 = GL_X(x + width * siz);
     yf1 = GL_Y(y);
@@ -61,17 +68,21 @@ void Slide::setSlidePos(int _x, int _x2, int min_i, int max_i)
 
 void Slide::uploadImage()
 {
-    if (atlas_x == -1) return;
+    if (atlas_x == -1) return;  // Return if texture atlas position not initialized
 
-    setAtlasPos(atlas_x, atlas_y, width, height);
+    setAtlasPos(atlas_x, atlas_y, width, height);   // Set image rectangle on texture atlas
 
     canvas->updateTexture(image.data(), atlas_x, atlas_y, width, height);
 }
 
 bool Slide::lookMouseInside(const int &mx, const int &my)
 {
+    // Change mouse coordinates to OpenGL coordinates
+
     float mxf = GL_MX(mx);
     float myf = GL_MY(my);
+
+    // If outside label bounds, return false
 
     if (mxf < xf1 || mxf > xf2 || myf > yf1 || myf < yf2) return false;
 
@@ -81,31 +92,41 @@ bool Slide::lookMouseInside(const int &mx, const int &my)
 void Slide::mouseClick(const int &mx, const int &my)
 {
     if (!lookMouseInside(mx, my)) return;
-    grab = true;
+    grab = true;    // Set label grabbed if mouse clicked inside bounds
 }
 
 void Slide::mouseRelease()
 {
-    grab = false;
+    grab = false;   // Release grab
 }
 
 int Slide::mouseMove(const int &mx)
 {
     if (!grab) return -1;
 
+    // Change mouse x-coordinates to OpenGL coordinates relative to current window dimensions
+
     x = (float)(mx - width) * ((float)canvas->getWidth() / (float)canvas->getWindowWidth());
+
+    // Check if coordinates are outside slide min/max coordinates
 
     (x < sx1) ? x = sx1 : 0;
     (x > sx2) ? x = sx2 : 0;
 
+    // Set slide coordinates to respond mouse x-coordinates
+
     xf1 = GL_X(x);
     xf2 = GL_X(x + width * siz);
+
+    // Return variable value relative to slide coordinates
 
     return min_item + (int)((float)(x - sx1) * item_ex);
 }
 
 void Slide::draw()
 {
+    // Get texture positions from atlas and draw slide rectangle on canvas
+
     glTexCoord2f(tex_x, tex_y);
     glVertex2f(xf1, yf1);
 
