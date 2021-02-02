@@ -31,6 +31,7 @@ class Label : public CanvasObject
 
         vector<uint32_t> text_area;         // Text bitmap
         string   text;                      // Text
+        int      text_size;                 // Current text width in pixels
         int      x, y;                      // Label position
         float    xf1, xf2;                  // Label position rectangle in OpenGL context
         float    yf1, yf2;

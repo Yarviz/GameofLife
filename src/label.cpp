@@ -24,6 +24,8 @@ void Label::setText(string _text, uint32_t color)
     Fonts::text(text, text_area.data(), 0, 0, width, height, color);
 
     t_width = text.size() * 4;  // Save text width
+    
+    setXY(x, y, text_size);   // Update text rectangle
 }
 
 void Label::uploadText()
@@ -39,6 +41,7 @@ void Label::setXY(int _x, int _y, int siz)
 {
     x = _x;
     y = _y;
+    text_size = siz;
 
     // Set label OpenGL position (-1.0 to 1.0) on canvas
 
