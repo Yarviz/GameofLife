@@ -30,15 +30,15 @@ void Game::init()
     canvas.reset(new Canvas(width, height));
     canvas->setTitle("Conways Game of Life");
 
-    // Set cell map size [cell_siz * cell_siz].
+    // Set cell map size [cell_siz * cell_siz]
     cell_siz = 64;
 
-    // Initialize cell map and set random cells to live.
+    // Initialize cell map and set random cells to live
     cellmap = new CellMap(canvas.get());
     cellmap->setSize(cell_siz, cell_siz);
     cellmap->randomCellMap(16);
 
-    // Initialize labels : set text, text color, position, image size multiply and required bitmap size.
+    // Initialize labels : set text, text color, position, image size multiply and required bitmap size
     labelSize = new Label(canvas.get(), 80, 5);
     labelSize->setText("SIZE: 64 X 64", 0xff00ffff);
     labelSize->setXY(50, 60, 2);
@@ -51,19 +51,19 @@ void Game::init()
     labelColor->setText("COLOR: FFFFFF", cellmap->getColor());
     labelColor->setXY(580, 60, 2);
 
-    // Add labels to canvas and initialize required space from texture atlas.
+    // Add labels to canvas and initialize required space from texture atlas
     canvas->addChild(cellmap, CELL_MAP_WIDTH, CELL_MAP_HEIGHT);
     canvas->addChild(labelSize, 80, 5);
     canvas->addChild(labelSpeed, 80, 5);
     canvas->addChild(labelColor, 80, 5);
 
-    // Upload label bitmaps on texture atlas.
+    // Upload label bitmaps on texture atlas
     labelSize->uploadText();
     labelSpeed->uploadText();
     labelColor->uploadText();
 
     // Initialize slides : set position, sliding position range(x1 - x2) and
-    // counted value range (value min - value max).
+    // counted value range (value min - value max)
     slideSize = new Slide(canvas.get());
     slideSize->setXY(56, 32, 2);
     slideSize->setSlidePos(36, 212, 3, CELL_MAP_HEIGHT);
@@ -76,17 +76,17 @@ void Game::init()
     slideColor->setXY(740, 32, 2);
     slideColor->setSlidePos(564, 740, 0, 175);
 
-    // Add slides to canvas and initialize required space from texture atlas.
+    // Add slides to canvas and initialize required space from texture atlas
     canvas->addChild(slideSize, SLIDE_WIDTH, SLIDE_HEIGHT);
     canvas->addChild(slideSpeed, SLIDE_WIDTH, SLIDE_HEIGHT);
     canvas->addChild(slideColor, SLIDE_WIDTH, SLIDE_HEIGHT);
 
-    // Upload slide bitmaps on texture atlas.
+    // Upload slide bitmaps on texture atlas
     slideSize->uploadImage();
     slideSpeed->uploadImage();
     slideColor->uploadImage();
 
-    // Initialize buttons : set button size, text, text color, position and image size multiply.
+    // Initialize buttons : set button size, text, text color, position and image size multiply
     buttonShadows= new Button(canvas.get(), BUTTON_WIDTH, BUTTON_HEIGHT, "SHADOWS: ON", 0xffffff);
     buttonShadows->setXY(36, 90, 2);
 
@@ -103,14 +103,14 @@ void Game::init()
     buttonStep->setXY(634, 90, 2);
 
     // Add buttons to canvas and initialize required space from texture atlas. Buttons need
-    // double height from atlas (normal and pressed button images).
+    // double height from atlas (normal and pressed button images)
     canvas->addChild(buttonShadows, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonClear, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonRandom, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonStop, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
     canvas->addChild(buttonStep, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
 
-    // Upload button bitmaps on texture atlas.
+    // Upload button bitmaps on texture atlas
     buttonShadows->uploadImage();
     buttonClear->uploadImage();
     buttonRandom->uploadImage();

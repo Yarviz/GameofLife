@@ -32,7 +32,7 @@ class Game
         void   init();
         string toHex(uint32_t value, int len);
 
-        typedef struct {
+        typedef struct {                // Mouse info
             bool button[2];
             bool hold;
             bool inside;
