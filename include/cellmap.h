@@ -34,24 +34,24 @@ class CellMap : public CanvasObject
         CellMap(Canvas *canvas_);       // Set root canvas
         virtual ~CellMap();
 
-        void draw();                                                    // Draw cell map on canvas
-        void updateTexture();                                           // Update cell map on texture atlas (current dimensions)
-        void setSize(int _width, int _height);                          // Set cell map current dimensions
-        void randomCellMap(int rnd);                                    // Set random cells to live
-        void animateCells();                                            // Animate cells
-        void mouseClick(const int &x, const int &y, const int button);  // Mouse click callback
-        void setCellColor(uint8_t r, uint8_t g, uint8_t b);             // Set cell color (RGB)
-        void setColorWheelColor(int i, bool stopped);                   // Set cell color from color wheel
-        void toggleAnimate();                                           // Toggle shadows on/off
-        bool getAnimate() {return animate;}                             // Get shadows state
-        void clearCellMap(bool all);                                    // Clear cell map
-        uint32_t getColor() {return colors[1];}                         // Get current cell color
+        void draw();                                                     // Draw cell map on canvas
+        void updateTexture();                                            // Update cell map on texture atlas (current dimensions)
+        void setSize(int _width, int _height);                           // Set cell map current dimensions
+        void randomCellMap(int rnd);                                     // Set random cells to live
+        void animateCells();                                             // Animate cells
+        void mouseClick(const int &mx, const int &my, const int button); // Mouse click callback
+        void setCellColor(uint8_t r, uint8_t g, uint8_t b);              // Set cell color (RGB)
+        void setColorWheelColor(int i, bool stopped);                    // Set cell color from color wheel
+        void toggleAnimate();                                            // Toggle shadows on/off
+        bool getAnimate() {return animate;}                              // Get shadows state
+        void clearCellMap(bool all);                                     // Clear cell map
+        uint32_t getColor() {return colors[1];}                          // Get current cell color
 
     private:
-        void checkCell(const int &x,const int &y, const int &n_cells);  // Check cell state relative to previous generation
-        void countCenterCells(const int &x,const int &y);               // Check cell map center cells
-        void countEdgeCells(const int &x,const int &y);                 // Check cell map edge cells
-        bool lookMouseInside(const int &x, const int &y);               // Check if mouse inside cell map
+        void checkCell(const int &x,const int &y, const int &n_cells);   // Check cell state relative to previous generation
+        void countCenterCells(const int &x,const int &y);                // Check cell map center cells
+        void countEdgeCells(const int &x,const int &y);                  // Check cell map edge cells
+        bool lookMouseInside(const int &mx, const int &my);              // Check if mouse inside cell map
         void initColorWheel();
         void updateCellMapColors();
 
