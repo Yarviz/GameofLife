@@ -15,8 +15,6 @@
 #define SLIDE_WIDTH     12
 #define SLIDE_HEIGHT    12
 
-using namespace std;
-
 // Class for sliding object on canvas
 class Slide : public CanvasObject
 {

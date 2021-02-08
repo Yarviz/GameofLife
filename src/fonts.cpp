@@ -22,9 +22,9 @@ bool Fonts::loadFonts()
     if (Fonts::inited == true) return true; // Return if fonts already initialized
 
     std::stringstream font_code;
-    ifstream font_file;
+    std::ifstream font_file;
 
-    font_file.exceptions (ifstream::failbit | ifstream::badbit);
+    font_file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
 
     // Read fonts from file and catch possible errors
 
@@ -34,9 +34,9 @@ bool Fonts::loadFonts()
         font_code << font_file.rdbuf();
         font_file.close();
     }
-    catch (ifstream::failure e)
+    catch (std::ifstream::failure e)
     {
-        cout << "Error: Font File not succesfully read" << endl;
+        std::cout << "Error: Font File not succesfully read" << std::endl;
         return false;
     }
 
@@ -75,7 +75,7 @@ bool Fonts::loadFonts()
 
 void Fonts::initFonts()
 {
-    string fonts = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:";
+    std::string fonts = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:";
 
     memset(&font_num, 0, sizeof(font_num));
 
@@ -89,7 +89,7 @@ void Fonts::initFonts()
     inited = true;
 }
 
-void Fonts::text(const string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color, bool middle)
+void Fonts::text(const std::string &txt, uint32_t *dest, int x, int y, int width, int height, uint32_t color, bool middle)
 {
     int xx, yy;
     int ch;

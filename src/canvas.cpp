@@ -9,7 +9,7 @@ Canvas::Canvas(int _width, int _height)
 
     if(display == NULL)
     {
-        cout << "Cannot open display." << endl;
+        std::cout << "Cannot open display." << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -23,7 +23,7 @@ Canvas::Canvas(int _width, int _height)
 
     if(vi_info == NULL)
     {
-        cout << "Cannot get visual." << endl;
+        std::cout << "Cannot get visual." << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -54,7 +54,7 @@ void Canvas::initOpenGL()
 
     if (glxc == NULL)
     {
-        cout << "Cannot get OpenGL context." << endl;
+        std::cout << "Cannot get OpenGL context." << std::endl;
         exit(EXIT_FAILURE);
     }
 

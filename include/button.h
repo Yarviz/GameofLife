@@ -16,8 +16,6 @@
 #define BUTTON_WIDTH     64
 #define BUTTON_HEIGHT    32
 
-using namespace std;
-
 // Class for canvas buttons
 class Button : public CanvasObject
 {
