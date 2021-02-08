@@ -14,7 +14,7 @@ Label::~Label()
     //
 }
 
-void Label::setText(string _text, uint32_t color)
+void Label::setText(std::string _text, uint32_t color)
 {
     text = _text;
 

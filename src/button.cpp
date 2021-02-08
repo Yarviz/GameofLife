@@ -1,6 +1,6 @@
 #include "button.h"
 
-Button::Button(Canvas *canvas_, int _width, int _height, string _text, uint32_t _text_col)
+Button::Button(Canvas *canvas_, int _width, int _height, std::string _text, uint32_t _text_col)
 {
     canvas = canvas_;
     width = _width;
@@ -78,7 +78,7 @@ void Button::setTextColor(uint32_t col)
     text_col[1] |= (int)((float)(col & 0xff0000) * 0.7);
 }
 
-void Button::setText(const string &txt)
+void Button::setText(const std::string &txt)
 {
     text = txt;
 

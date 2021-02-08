@@ -9,8 +9,6 @@
 
 #define FONTS   38
 
-using namespace std;
-
 // Static class for drawing fonts on bitmap
 class Fonts
 {
@@ -20,7 +18,7 @@ class Fonts
 
         static bool loadFonts();    // Load fonts from file
 
-        static void text(const string &txt, uint32_t *dest, int x, int y,
+        static void text(const std::string &txt, uint32_t *dest, int x, int y,
                          int width, int height, uint32_t color, bool middle = false);   // Drawing text on destination bitmap
 
     private:

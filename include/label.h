@@ -12,8 +12,6 @@
 #include "canvas.h"
 #include "fonts.h"
 
-using namespace std;
-
 // Label class for drawing text on canvas
 class Label : public CanvasObject
 {
@@ -21,7 +19,7 @@ class Label : public CanvasObject
         Label(Canvas *canvas_, int _width, int _height);    // Set root canvas and text bitmap dimensions
         virtual ~Label();
 
-        void setText(string _text, uint32_t color);         // Set text and color
+        void setText(std::string _text, uint32_t color);         // Set text and color
         void setXY(int _x, int _y, int siz);                // Set label position and text size factor
         void uploadText();                                  // Upload text bitmap to texture atlas
         void draw();                                        // Draw label
@@ -30,7 +28,7 @@ class Label : public CanvasObject
         Canvas  *canvas;                    // Root canvas
 
         vector<uint32_t> text_area;         // Text bitmap
-        string   text;                      // Text
+        std::string   text;                      // Text
         int      text_size;                 // Current text width in pixels
         int      x, y;                      // Label position
         float    xf1, xf2;                  // Label position rectangle in OpenGL context

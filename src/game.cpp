@@ -136,16 +136,16 @@ void Game::init()
     memset(&mouse, 0, sizeof(mouse));
 }
 
-// Function for changing color value to hexadecimal string
+// Function for changing color value to hexadecimal std::string
 
-string Game::toHex(const uint32_t &value, int len)
+std::string Game::toHex(const uint32_t &value, int len)
 {
     // Invert color order bits from BGR to RGB
 
     uint32_t num = (value & 0xff0000) >> 16 | (value & 0x0000ff) << 16 | (value & 0x00ff00);
 
     static const char* digit = "0123456789ABCDEF";
-    string str(len, '0');
+    std::string str(len, '0');
     for (size_t i = 0, j = (len - 1) * 4 ; i < len; ++i, j -= 4)
                 str[i] = digit[(num >> j) & 0x0f];
     return str;
@@ -217,7 +217,7 @@ void Game::run()
                     {
                         cell_siz = item;
 
-                        labelSize->setText("SIZE: " + to_string(item) + " X " + to_string(item), 0xff00ffff);
+                        labelSize->setText("SIZE: " + std::to_string(item) + " X " + std::to_string(item), 0xff00ffff);
                         labelSize->uploadText();
                         cellmap->setSize(item, item);
                         break;
@@ -228,7 +228,7 @@ void Game::run()
                     {
                         speed = item;
 
-                        labelSpeed->setText("SPEED: " + to_string(speed) + " FPS", 0xff00ffff);
+                        labelSpeed->setText("SPEED: " + std::to_string(speed) + " FPS", 0xff00ffff);
                         labelSpeed->uploadText();
                         break;
                     }

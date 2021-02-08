@@ -18,8 +18,6 @@
 #include "button.h"
 #include "fonts.h"
 
-using namespace std;
-
 class Game
 {
     public:
@@ -30,7 +28,7 @@ class Game
 
     private:
         void   init();
-        string toHex(const uint32_t &value, int len);
+        std::string toHex(const uint32_t &value, int len);
 
         typedef struct {                // Mouse info
             bool button[2];
