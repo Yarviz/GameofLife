@@ -2,11 +2,9 @@
 
 This program is linux version of Conway's Game of Life.
 
-X11 development libraries and GLX libraries needed: 
+X11 development libraries and GLX libraries needed (and openGL libraries): 
 
-    sudo apt-get install libx11-dev
-
-    sudo apt-get install libgl1-mesa-glx
+    sudo apt-get install libx11-dev libgl1-mesa-glx libgl
 
 Compiled with g++ (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
 
